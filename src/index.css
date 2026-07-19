@@ -1,0 +1,483 @@
+/* ————— Hear Then Play design tokens ————— */
+:root {
+  /* Warm wood palette */
+  --cream: #f7f2e9;
+  --cream-deep: #efe6d6;
+  --walnut: #3a2c21;
+  --walnut-soft: #5c4936;
+  --oak: #8a6a4d;
+  --oak-light: #c9b295;
+  --brass: #b07d3f;
+  --ember: #b45c33;
+  --ember-soft: #d99a72;
+  --sage: #7d8b6f;
+  --ink-on-dark: #f5ede0;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 2px 14px rgba(58, 44, 33, 0.1), 0 1px 3px rgba(58, 44, 33, 0.08);
+  --shadow-lift: 0 8px 28px rgba(58, 44, 33, 0.16);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Nunito Sans", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--cream);
+  color: var(--walnut);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100dvh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+}
+
+/* ————— App shell ————— */
+.app {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px calc(84px + env(safe-area-inset-bottom));
+  min-height: 100dvh;
+}
+
+.app-header {
+  padding: 26px 0 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.app-header .wordmark {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.01em;
+}
+
+.wordmark em {
+  color: var(--ember);
+  font-style: italic;
+}
+
+.streak {
+  font-size: 13px;
+  color: var(--walnut-soft);
+}
+
+/* ————— Bottom navigation ————— */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(247, 242, 233, 0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(58, 44, 33, 0.08);
+  z-index: 50;
+}
+
+.tabbar button {
+  flex: 1;
+  max-width: 150px;
+  background: none;
+  padding: 8px 4px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--walnut-soft);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.tabbar button .glyph {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.tabbar button.active {
+  color: var(--ember);
+  background: rgba(180, 92, 51, 0.08);
+}
+
+/* ————— Cards ————— */
+.card {
+  background: #fffdf8;
+  border: 1px solid rgba(58, 44, 33, 0.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin: 14px 0;
+}
+
+.card.wood {
+  background: linear-gradient(135deg, #4a3828 0%, #3a2c21 60%, #33261c 100%);
+  color: var(--ink-on-dark);
+  border: none;
+}
+
+.card.wood .subtle {
+  color: rgba(245, 237, 224, 0.7);
+}
+
+.card h2 {
+  font-size: 21px;
+  margin-bottom: 6px;
+}
+
+.card h3 {
+  font-size: 17px;
+}
+
+.subtle {
+  color: var(--walnut-soft);
+  font-size: 14px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brass);
+  margin-bottom: 8px;
+}
+
+/* ————— Buttons ————— */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--ember);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(180, 92, 51, 0.35);
+}
+
+.btn-primary:hover {
+  background: #a2512c;
+}
+
+.btn-ghost {
+  background: rgba(58, 44, 33, 0.06);
+  color: var(--walnut);
+}
+
+.btn-ghost:hover {
+  background: rgba(58, 44, 33, 0.11);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ————— Answer options ————— */
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.options.single-col {
+  grid-template-columns: 1fr;
+}
+
+.option {
+  background: #fffdf8;
+  border: 1.5px solid rgba(58, 44, 33, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 14px 12px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--walnut);
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s;
+}
+
+.option:hover {
+  border-color: var(--oak);
+}
+
+.option:active {
+  transform: scale(0.98);
+}
+
+.option.correct {
+  border-color: var(--sage);
+  background: rgba(125, 139, 111, 0.13);
+}
+
+.option.wrong {
+  border-color: var(--ember-soft);
+  background: rgba(180, 92, 51, 0.08);
+  opacity: 0.75;
+}
+
+.option .hint {
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--walnut-soft);
+  margin-top: 2px;
+}
+
+/* ————— Reveal / why panel ————— */
+.why {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--brass);
+  background: rgba(176, 125, 63, 0.07);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 14.5px;
+  animation: rise 0.35s ease;
+}
+
+.why strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-in {
+  animation: rise 0.35s ease;
+}
+
+/* ————— Keyboard ————— */
+.keyboard {
+  display: flex;
+  position: relative;
+  height: 170px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.key-white {
+  flex: 1;
+  background: linear-gradient(#fffefb, #f4efe6);
+  border: 1px solid #d8cfc0;
+  border-radius: 0 0 6px 6px;
+  position: relative;
+  transition: background 0.1s;
+}
+
+.key-white.held,
+.key-white:active {
+  background: linear-gradient(#f3e7d8, #eaddc9);
+}
+
+.key-white.lit {
+  background: linear-gradient(#f5d9c4, #edc4a6);
+  border-color: var(--ember-soft);
+}
+
+.key-white .label {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--walnut-soft);
+  pointer-events: none;
+}
+
+.key-black {
+  position: absolute;
+  top: 0;
+  width: 8%;
+  height: 60%;
+  background-color: #33281e;
+  border-radius: 0 0 5px 5px;
+  z-index: 2;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.1s;
+}
+
+.key-black.held,
+.key-black:active {
+  background-color: #1f1710;
+}
+
+.key-black.lit {
+  background-color: var(--ember);
+}
+
+/* ————— Chord chips ————— */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.chip {
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(58, 44, 33, 0.06);
+  color: var(--walnut);
+  transition: background 0.15s, color 0.15s;
+}
+
+.chip.active {
+  background: var(--walnut);
+  color: var(--ink-on-dark);
+}
+
+/* ————— Home mode cards ————— */
+.mode-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  margin: 14px 0;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+}
+
+.mode-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.mode-card h2 {
+  font-size: 22px;
+  margin: 4px 0 6px;
+}
+
+.mode-card p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.mode-listen {
+  background: linear-gradient(135deg, #4a3828, #33261c);
+  color: var(--ink-on-dark);
+}
+
+.mode-listen p {
+  color: rgba(245, 237, 224, 0.75);
+}
+
+.mode-listen .eyebrow {
+  color: var(--ember-soft);
+}
+
+.mode-play {
+  background: linear-gradient(135deg, #fffdf8, #f3ead9);
+  border: 1px solid rgba(58, 44, 33, 0.08);
+  color: var(--walnut);
+}
+
+.mode-play p {
+  color: var(--walnut-soft);
+}
+
+.screen-title {
+  font-size: 28px;
+  margin: 18px 0 4px;
+}
+
+.screen-sub {
+  color: var(--walnut-soft);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.back-link {
+  background: none;
+  color: var(--brass);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prompt-word {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-style: italic;
+  color: var(--ink-on-dark);
+  margin: 10px 0 4px;
+}
+
+.stat-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.stat {
+  font-size: 13px;
+  color: var(--walnut-soft);
+}
+
+.stat b {
+  display: block;
+  font-size: 20px;
+  color: var(--walnut);
+  font-family: var(--font-display);
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Hear Then Play",
+  "short_name": "HearThenPlay",
+  "description": "Learn piano the way you learned language: hear, understand, feel, play, create.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F2E9",
+  "theme_color": "#F7F2E9",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
