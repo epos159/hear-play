@@ -11,10 +11,10 @@ export default function Home({ progress, go }) {
       <p className="screen-sub">Hear it first. The playing will follow.</p>
 
       {!progress.completedPlacement && (
-        <button className="mode-card" style={{ background: "linear-gradient(135deg, #1e5a96, #0f3f6f)" }} onClick={() => go("learn")}>
-          <div className="eyebrow">Start here</div>
+        <button className="mode-card mode-listen" style={{ background: "linear-gradient(135deg, #66755a, #4a5741)" }} onClick={() => go("learn")}>
+          <div className="eyebrow">New here? Start here</div>
           <h2>Learn the fundamentals</h2>
-          <p>Take a quick placement test and unlock your personalized learning path — from staff notation to ear training.</p>
+          <p>Six quick questions find your level, then lessons take you from the staff to chords to musical sentences.</p>
         </button>
       )}
 

@@ -8,7 +8,7 @@ import { loadProgress, recordListen, recordExploration, updateLearning } from ".
 
 const TABS = [
   { id: "home", label: "Home", glyph: "⌂" },
-  { id: "learn", label: "Learn", glyph: "📚" },
+  { id: "learn", label: "Learn", glyph: "✎" },
   { id: "listen", label: "Listen", glyph: "◠" },
   { id: "play", label: "Play", glyph: "▤" },
   { id: "create", label: "Create", glyph: "✧" },

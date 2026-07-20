@@ -1,4 +1,4 @@
-export default function LessonStaffBasics({ lesson }) {
+export default function LessonStaffBasics() {
   return (
     <div>
       <h2>The Musical Staff</h2>
@@ -34,7 +34,7 @@ export default function LessonStaffBasics({ lesson }) {
         The treble clef shows <strong>higher-pitched notes</strong> — what most melody instruments and the right hand of piano play.
       </p>
       <p style={{ opacity: 0.7, fontSize: "0.95rem" }}>
-        On the treble staff, Line 2 is G, Line 3 is B, and Line 5 is F. The spaces spell the word FACE from bottom to top.
+        On the treble staff, the lines from bottom to top are E–G–B–D–F (&ldquo;Every Good Boy Does Fine&rdquo;). The spaces spell the word FACE from bottom to top.
       </p>
 
       <h3>The Bass Clef (𝄢)</h3>
@@ -42,7 +42,7 @@ export default function LessonStaffBasics({ lesson }) {
         The bass clef shows <strong>lower-pitched notes</strong> — what bass instruments and the left hand of piano play.
       </p>
       <p style={{ opacity: 0.7, fontSize: "0.95rem" }}>
-        On the bass staff, Line 4 is G, Line 3 is B, and Line 1 is A. The spaces spell ACEG from bottom to top.
+        On the bass staff, the lines from bottom to top are G–B–D–F–A (&ldquo;Good Boys Do Fine Always&rdquo;). The spaces spell A–C–E–G (&ldquo;All Cows Eat Grass&rdquo;).
       </p>
 
       <h3>Key Takeaway</h3>

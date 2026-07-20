@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { getLessonById, getNextLesson, getLessonIndex, CURRICULUM } from "../curriculum.js";
+import { getLessonById, getLessonIndex } from "../curriculum.js";
 import LessonStaffBasics from "./lessons/StaffBasics.jsx";
 import LessonMajorScale from "./lessons/MajorScale.jsx";
 import LessonIntervalBasics from "./lessons/IntervalBasics.jsx";
@@ -14,63 +13,47 @@ const LESSON_COMPONENTS = {
   cadences: LessonCadences,
 };
 
+const PRACTICE_LABELS = {
+  emotion: "chord feeling",
+  interval: "interval",
+  cadence: "finished-or-not",
+};
+
 export default function LessonContent({ lessonId, onComplete, onBack }) {
-  const [progress, setProgress] = useState({ scrolled: false });
   const lesson = getLessonById(lessonId);
 
   if (!lesson) return <div>Lesson not found</div>;
 
   const LessonComponent = LESSON_COMPONENTS[lessonId] || LessonFallback;
   const idx = getLessonIndex(lessonId);
-  const moduleNum = idx?.module + 1;
-  const lessonNum = idx?.lesson + 1;
 
   return (
     <div className="fade-in">
-      <button className="back-link" onClick={onBack}>← Back to lessons</button>
+      <button className="back-link" onClick={onBack}>← All lessons</button>
 
-      <div style={{ marginBottom: 8 }}>
-        <span className="eyebrow">
-          Module {moduleNum}, Lesson {lessonNum}
-        </span>
-      </div>
+      {idx && (
+        <div className="eyebrow" style={{ marginTop: 8 }}>
+          Module {idx.module + 1} · Lesson {idx.lesson + 1}
+        </div>
+      )}
 
       <h1 className="screen-title">{lesson.title}</h1>
       <p className="screen-sub">{lesson.description}</p>
 
-      <div
-        className="card"
-        style={{ marginBottom: 24 }}
-        onScroll={() => setProgress({ scrolled: true })}
-      >
+      <div className="card" style={{ marginBottom: 24 }}>
         <LessonComponent lesson={lesson} />
       </div>
 
       {lesson.practice ? (
-        <div
-          style={{
-            background: "rgba(0,0,0,0.03)",
-            padding: 20,
-            borderRadius: 8,
-            marginBottom: 20,
-            textAlign: "center",
-          }}
-        >
-          <p style={{ margin: 0, marginBottom: 12 }}>
-            Ready to practice what you learned?
-          </p>
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              onComplete();
-            }}
-          >
-            Start {lesson.practice} practice →
+        <div className="card" style={{ textAlign: "center" }}>
+          <p style={{ marginTop: 0 }}>Ready to train your ear on this?</p>
+          <button className="btn btn-primary" onClick={onComplete}>
+            Practice {PRACTICE_LABELS[lesson.practice] || lesson.practice} recognition →
           </button>
         </div>
       ) : (
         <button className="btn btn-primary btn-block" onClick={onComplete}>
-          Next lesson →
+          Done — next lesson →
         </button>
       )}
     </div>
@@ -80,11 +63,8 @@ export default function LessonContent({ lessonId, onComplete, onBack }) {
 function LessonFallback({ lesson }) {
   return (
     <div>
-      <h2>{lesson.title}</h2>
       <p>{lesson.description}</p>
-      <p style={{ opacity: 0.6, marginTop: 20 }}>
-        (Lesson content coming soon)
-      </p>
+      <p style={{ opacity: 0.6, marginTop: 20 }}>(Full lesson content coming soon — mark it done and keep moving.)</p>
     </div>
   );
 }

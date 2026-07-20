@@ -1,6 +1,6 @@
 import { playProgression } from "../../audio.js";
 
-export default function LessonCadences({ lesson }) {
+export default function LessonCadences() {
   return (
     <div>
       <h2>Musical Punctuation: Cadences</h2>
@@ -105,20 +105,6 @@ export default function LessonCadences({ lesson }) {
         <strong>Practice tip:</strong> Listen to the end of songs on the radio or in music you love. Can you hear where the phrases end? Can you feel if it's finished or still going?
       </div>
 
-      <style>{`
-        .btn-small {
-          font-size: 0.9rem;
-          padding: 6px 12px;
-          background: rgba(0,0,0,0.08);
-          border: 1px solid rgba(0,0,0,0.15);
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .btn-small:hover {
-          background: rgba(0,0,0,0.12);
-        }
-      `}</style>
     </div>
   );
 }

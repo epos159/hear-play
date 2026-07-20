@@ -1,6 +1,6 @@
 import { playChord } from "../../audio.js";
 
-export default function LessonTriadBasics({ lesson }) {
+export default function LessonTriadBasics() {
   return (
     <div>
       <h2>Building Chords from Intervals</h2>
@@ -31,7 +31,7 @@ export default function LessonTriadBasics({ lesson }) {
             ▶ Hear C Major
           </button>
           <p style={{ marginTop: 12, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            Sounds happy, resolved, at rest. The major third (4 semitones up) is what gives it that brightnes.
+            Sounds happy, resolved, at rest. The major third (4 semitones up) is what gives it that brightness.
           </p>
         </div>
 
@@ -106,20 +106,6 @@ export default function LessonTriadBasics({ lesson }) {
         <strong>Key insight:</strong> The quality of a chord (major, minor, etc.) comes from the third — the middle note. Change that one note, and you change the whole feeling.
       </div>
 
-      <style>{`
-        .btn-small {
-          font-size: 0.9rem;
-          padding: 6px 12px;
-          background: rgba(0,0,0,0.08);
-          border: 1px solid rgba(0,0,0,0.15);
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .btn-small:hover {
-          background: rgba(0,0,0,0.12);
-        }
-      `}</style>
     </div>
   );
 }

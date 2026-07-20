@@ -1,6 +1,6 @@
 import { playInterval } from "../../audio.js";
 
-export default function LessonIntervalBasics({ lesson }) {
+export default function LessonIntervalBasics() {
   return (
     <div>
       <h2>What Are Intervals?</h2>
@@ -49,7 +49,7 @@ export default function LessonIntervalBasics({ lesson }) {
             ▶ Hear it
           </button>
           <p style={{ marginTop: 8, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            A step — the most basic leap. Think "Happy Birthday" (happy-birthday).
+            A step — the most basic move. Think "Happy Birthday": the first rise, on "py–birth," is a major 2nd.
           </p>
         </div>
 

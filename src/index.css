@@ -509,8 +509,13 @@ button {
 }
 
 .lesson-card:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
+}
+
+.lesson-card.done {
+  border-color: rgba(125, 139, 111, 0.5);
+  background: rgba(125, 139, 111, 0.07);
 }
 
 .lesson-card h3 {
@@ -547,8 +552,19 @@ button {
   color: var(--ember);
   padding: 4px 12px;
   border-radius: 12px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-done {
+  background: rgba(125, 139, 111, 0.18);
+  color: var(--sage);
+}
+
+.badge-muted {
+  background: rgba(58, 44, 33, 0.07);
+  color: var(--walnut-soft);
 }
 
 .btn-small {

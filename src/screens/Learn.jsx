@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CURRICULUM, getPlacementLevel, PLACEMENT_TEST, getLessonById, getNextLesson } from "../curriculum.js";
+import { getLessonById, getNextLesson } from "../curriculum.js";
 import PlacementTest from "../components/PlacementTest.jsx";
 import LessonContent from "../components/LessonContent.jsx";
 import LessonList from "../components/LessonList.jsx";
@@ -8,11 +8,11 @@ export default function Learn({ progress, onLessonComplete, go }) {
   const [state, setLearnState] = useState(() => {
     if (!progress.completedPlacement) return { view: "placement" };
     if (progress.currentLesson) return { view: "lesson", lessonId: progress.currentLesson };
-    return { view: "overview", startLevel: progress.startLevel || 0 };
+    return { view: "overview" };
   });
 
   const handlePlacementComplete = (level) => {
-    setLearnState({ view: "overview", startLevel: level });
+    setLearnState({ view: "overview" });
     onLessonComplete({ completedPlacement: true, startLevel: level });
   };
 
@@ -23,20 +23,24 @@ export default function Learn({ progress, onLessonComplete, go }) {
 
   const handleLessonComplete = () => {
     const lesson = getLessonById(state.lessonId);
-    if (lesson && lesson.practice) {
+    const completedLessons = progress.completedLessons.includes(state.lessonId)
+      ? progress.completedLessons
+      : [...progress.completedLessons, state.lessonId];
+
+    if (lesson?.practice) {
+      // Lessons that end in ear training hand off to the Listen tab.
+      onLessonComplete({ completedLessons, currentLesson: null });
       go("listen");
-    } else {
-      const nextLesson = getNextLesson(state.lessonId);
-      if (nextLesson) {
-        handleStartLesson(nextLesson.id);
-      } else {
-        setLearnState({ view: "overview", startLevel: progress.startLevel || 0 });
-      }
+      return;
     }
+
+    const next = getNextLesson(state.lessonId);
+    onLessonComplete({ completedLessons, currentLesson: next ? next.id : null });
+    setLearnState(next ? { view: "lesson", lessonId: next.id } : { view: "overview" });
   };
 
   const backToOverview = () => {
-    setLearnState({ view: "overview", startLevel: progress.startLevel || 0 });
+    setLearnState({ view: "overview" });
     onLessonComplete({ currentLesson: null });
   };
 
@@ -54,5 +58,11 @@ export default function Learn({ progress, onLessonComplete, go }) {
     );
   }
 
-  return <LessonList startLevel={state.startLevel} onSelectLesson={handleStartLesson} />;
+  return (
+    <LessonList
+      startLevel={progress.startLevel || 0}
+      completedLessons={progress.completedLessons || []}
+      onSelectLesson={handleStartLesson}
+    />
+  );
 }

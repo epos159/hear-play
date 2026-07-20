@@ -1,6 +1,6 @@
 import { playSequence } from "../../audio.js";
 
-export default function LessonMajorScale({ lesson }) {
+export default function LessonMajorScale() {
   const playMajorScale = () => {
     const cMajor = [60, 62, 64, 65, 67, 69, 71, 72]; // C D E F G A B C
     playSequence(cMajor, 0.3);
