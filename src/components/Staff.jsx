@@ -6,6 +6,7 @@ import { playNote } from "../audio.js";
 const SPACING = 12; // px between staff lines
 const LINES_Y = [30, 42, 54, 66, 78]; // top → bottom
 const BOTTOM_Y = 78;
+const STEM_LEN = 30;
 
 const LETTER_INDEX = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
 const LETTER_SEMIS = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
@@ -130,6 +131,13 @@ export default function Staff({ clef = "treble", notes = [], guide = null, inter
         {notes.map((note, i) => {
           const x = notesStart + i * noteGap;
           const y = noteY(note, clef);
+          // Standard engraving rule: notes at or above the middle line get a
+          // stem pointing down (left side); notes below it point up (right
+          // side). Stems always reach toward the middle, so they never run
+          // off the top or bottom of the staff.
+          const stemUp = y > LINES_Y[2];
+          const stemX = stemUp ? x + 6.6 : x - 6.6;
+          const stemTipY = stemUp ? y - STEM_LEN : y + STEM_LEN;
           return (
             <g
               key={i}
@@ -146,6 +154,7 @@ export default function Staff({ clef = "treble", notes = [], guide = null, inter
                   {note.acc === "#" ? "♯" : "♭"}
                 </text>
               )}
+              <line x1={stemX} y1={y} x2={stemX} y2={stemTipY} stroke="currentColor" strokeWidth="1.6" />
               <ellipse cx={x} cy={y} rx="7" ry="5.4" fill="currentColor" transform={`rotate(-14 ${x} ${y})`} />
               {note.label && (
                 <text x={x} y={height - 4} fontSize="10.5" fontWeight="700" textAnchor="middle" fill="currentColor" opacity="0.8">

@@ -15,6 +15,8 @@ export function loadProgress() {
       explorations: p.explorations || 0,
       completedPlacement: p.completedPlacement || false,
       startLevel: p.startLevel || 0,
+      freeNavigation: p.freeNavigation || false,
+      placementSummary: p.placementSummary || null,
       currentLesson: p.currentLesson || null,
       completedLessons: p.completedLessons || [],
     };
@@ -26,6 +28,8 @@ export function loadProgress() {
       explorations: 0,
       completedPlacement: false,
       startLevel: 0,
+      freeNavigation: false,
+      placementSummary: null,
       currentLesson: null,
       completedLessons: [],
     };

@@ -48,3 +48,43 @@ export function Compare({ a, b }) {
     </div>
   );
 }
+
+// A note value shown as a proportional bar (no music font needed) — the
+// bar's width is literally how long the note lasts relative to a beat.
+export function NoteValueBar({ label, beats, sub, demo }) {
+  const [played, setPlayed] = useState(false);
+  return (
+    <div className="note-value-row">
+      <div className="note-value-bar" style={{ width: `${Math.max(beats, 0.5) * 44}px` }} />
+      <div className="note-value-label">
+        <strong>{label}</strong>
+        <span>{sub || (beats === 1 ? "1 beat" : `${beats} beats`)}</span>
+      </div>
+      {demo && (
+        <button
+          className="btn btn-small"
+          onClick={() => {
+            playDemo(demo);
+            setPlayed(true);
+          }}
+        >
+          ▶ {played ? "Again" : "Hear it"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// A row of beat markers for teaching meter — the strong beat (the
+// "downbeat") is filled in, the rest are outlined.
+export function BeatRow({ count, strongOn = [1], labels }) {
+  return (
+    <div className="beat-row">
+      {Array.from({ length: count }, (_, i) => (
+        <div key={i} className={`beat-dot ${strongOn.includes(i + 1) ? "strong" : ""}`}>
+          {labels ? labels[i] : i + 1}
+        </div>
+      ))}
+    </div>
+  );
+}

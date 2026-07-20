@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getLessonById, getNextLesson, getUnlockedThrough } from "../curriculum.js";
+import { CURRICULUM, getLessonById, getNextLesson, getUnlockedThrough } from "../curriculum.js";
 import PlacementTest from "../components/PlacementTest.jsx";
 import LessonContent from "../components/LessonContent.jsx";
 import LessonList from "../components/LessonList.jsx";
@@ -15,12 +15,21 @@ export default function Learn({ progress, onLessonComplete, go }) {
 
   const completedLessons = progress.completedLessons || [];
   const startLevel = progress.startLevel || 0;
-  const unlockedThrough = getUnlockedThrough(startLevel, completedLessons);
+  const unlockedThrough = progress.freeNavigation
+    ? CURRICULUM.length - 1
+    : getUnlockedThrough(startLevel, completedLessons);
 
-  const handlePlacementComplete = (level) => {
+  const handlePlacementComplete = ({ moduleIndex, freeNavigation, summary }) => {
     setLearnState({ view: "overview" });
-    onLessonComplete({ completedPlacement: true, startLevel: level });
+    onLessonComplete({
+      completedPlacement: true,
+      startLevel: moduleIndex,
+      freeNavigation: !!freeNavigation,
+      placementSummary: summary,
+    });
   };
+
+  const handleRetakePlacement = () => setLearnState({ view: "placement" });
 
   const handleStartLesson = (lessonId) => {
     setLearnState({ view: "lesson", lessonId });
@@ -34,9 +43,10 @@ export default function Learn({ progress, onLessonComplete, go }) {
       : [...completedLessons, state.lessonId];
 
     if (lesson?.practice) {
-      // Lessons that end in ear training hand off to the Listen tab.
+      // Lessons that end in ear training hand off straight into the
+      // specific Listen game they promised, not the game picker.
       onLessonComplete({ completedLessons: completed, currentLesson: null });
-      go("listen");
+      go("listen", { game: lesson.practice });
       return;
     }
 
@@ -100,6 +110,14 @@ export default function Learn({ progress, onLessonComplete, go }) {
           onSelectLesson={handleStartLesson}
         />
       )}
+
+      <button
+        className="back-link"
+        style={{ display: "block", margin: "18px auto 0", textAlign: "center" }}
+        onClick={handleRetakePlacement}
+      >
+        Retake the placement check →
+      </button>
     </div>
   );
 }

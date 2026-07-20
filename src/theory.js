@@ -111,3 +111,11 @@ export function shuffle(arr) {
   }
   return a;
 }
+
+// Shuffle a multiple-choice option list while tracking where the correct
+// answer landed, so quizzes don't always show the answer in the same spot.
+export function shuffleOptions(options, correctIndex) {
+  const paired = options.map((opt, i) => ({ opt, isCorrect: i === correctIndex }));
+  const mixed = shuffle(paired);
+  return { options: mixed.map((p) => p.opt), correct: mixed.findIndex((p) => p.isCorrect) };
+}

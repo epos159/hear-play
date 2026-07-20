@@ -1,11 +1,15 @@
 // Registry mapping curriculum lesson ids to their content components and
 // end-of-lesson knowledge checks.
+import NoteValues, { quiz as noteValuesQuiz } from "./NoteValues.jsx";
+import TimeSignatures, { quiz as timeSignaturesQuiz } from "./TimeSignatures.jsx";
 import StaffBasics, { quiz as staffBasicsQuiz } from "./StaffBasics.jsx";
 import FindingNotes, { quiz as findingNotesQuiz } from "./FindingNotes.jsx";
 import Octaves, { quiz as octavesQuiz } from "./Octaves.jsx";
 import MajorScale, { quiz as majorScaleQuiz } from "./MajorScale.jsx";
 import NaturalMinor, { quiz as naturalMinorQuiz } from "./NaturalMinor.jsx";
 import ScaleDegrees, { quiz as scaleDegreesQuiz } from "./ScaleDegrees.jsx";
+import KeySignatures, { quiz as keySignaturesQuiz } from "./KeySignatures.jsx";
+import CircleOfFifths, { quiz as circleOfFifthsQuiz } from "./CircleOfFifths.jsx";
 import IntervalBasics, { quiz as intervalBasicsQuiz } from "./IntervalBasics.jsx";
 import IntervalQuality, { quiz as intervalQualityQuiz } from "./IntervalQuality.jsx";
 import HearingIntervals, { quiz as hearingIntervalsQuiz } from "./HearingIntervals.jsx";
@@ -19,12 +23,16 @@ import MelodyConstruction, { quiz as melodyConstructionQuiz } from "./MelodyCons
 import HarmonyBasics, { quiz as harmonyBasicsQuiz } from "./HarmonyBasics.jsx";
 
 export const LESSON_COMPONENTS = {
+  "note-values": NoteValues,
+  "time-signatures": TimeSignatures,
   "staff-basics": StaffBasics,
   "note-names": FindingNotes,
   octaves: Octaves,
   "major-scale": MajorScale,
   "natural-minor": NaturalMinor,
   "scale-degrees": ScaleDegrees,
+  "key-signatures": KeySignatures,
+  "circle-of-fifths": CircleOfFifths,
   "interval-basics": IntervalBasics,
   "interval-quality": IntervalQuality,
   "interval-ear": HearingIntervals,
@@ -39,12 +47,16 @@ export const LESSON_COMPONENTS = {
 };
 
 export const LESSON_QUIZZES = {
+  "note-values": noteValuesQuiz,
+  "time-signatures": timeSignaturesQuiz,
   "staff-basics": staffBasicsQuiz,
   "note-names": findingNotesQuiz,
   octaves: octavesQuiz,
   "major-scale": majorScaleQuiz,
   "natural-minor": naturalMinorQuiz,
   "scale-degrees": scaleDegreesQuiz,
+  "key-signatures": keySignaturesQuiz,
+  "circle-of-fifths": circleOfFifthsQuiz,
   "interval-basics": intervalBasicsQuiz,
   "interval-quality": intervalQualityQuiz,
   "interval-ear": hearingIntervalsQuiz,

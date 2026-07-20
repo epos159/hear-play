@@ -1,6 +1,6 @@
 // Resolve declarative audio-demo descriptors into playback. Lets lesson and
 // quiz data stay plain JSON-ish objects instead of holding functions.
-import { playNote, playChord, playInterval, playProgression, playSequence } from "./audio.js";
+import { playNote, playChord, playInterval, playProgression, playSequence, playRhythm } from "./audio.js";
 
 export function playDemo(demo) {
   if (!demo) return;
@@ -19,6 +19,9 @@ export function playDemo(demo) {
       break;
     case "sequence":
       playSequence(demo.notes, demo.step ?? 0.32);
+      break;
+    case "rhythm":
+      playRhythm(demo.tokens, demo.opts);
       break;
   }
 }

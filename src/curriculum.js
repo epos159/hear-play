@@ -1,11 +1,34 @@
 // Music education curriculum: from fundamentals to ear training mastery
+import { shuffle, shuffleOptions } from "./theory.js";
 
 export const CURRICULUM = [
+  {
+    id: "rhythm-basics",
+    title: "Rhythm and Note Values",
+    subtitle: "How long notes last, and how beats group together",
+    level: 0,
+    lessons: [
+      {
+        id: "note-values",
+        title: "Note Values and Rests",
+        description: "Whole, half, quarter, and eighth notes — and musical silence",
+        duration: "6 min",
+        topics: ["note values", "rhythm", "rests", "beats", "quarter note", "eighth note"],
+      },
+      {
+        id: "time-signatures",
+        title: "Time Signatures and Beats",
+        description: "What 4/4 and 3/4 mean, and how to feel the beat",
+        duration: "7 min",
+        topics: ["time signature", "meter", "beat", "measure", "downbeat"],
+      },
+    ],
+  },
   {
     id: "staff-notation",
     title: "Reading Music",
     subtitle: "The staff, clefs, and note names",
-    level: 0,
+    level: 1,
     lessons: [
       {
         id: "staff-basics",
@@ -34,7 +57,7 @@ export const CURRICULUM = [
     id: "scales-modes",
     title: "Scales and Modes",
     subtitle: "Building blocks of melody",
-    level: 1,
+    level: 2,
     lessons: [
       {
         id: "major-scale",
@@ -60,10 +83,32 @@ export const CURRICULUM = [
     ],
   },
   {
+    id: "key-signatures",
+    title: "Key Signatures",
+    subtitle: "Sharps, flats, and the Circle of Fifths",
+    level: 3,
+    lessons: [
+      {
+        id: "key-signatures",
+        title: "Key Signatures",
+        description: "What the sharps and flats at the start of a piece mean",
+        duration: "9 min",
+        topics: ["key signature", "sharps", "flats", "major keys"],
+      },
+      {
+        id: "circle-of-fifths",
+        title: "The Circle of Fifths",
+        description: "How all twelve keys relate to each other",
+        duration: "10 min",
+        topics: ["circle of fifths", "key relationships", "order of sharps and flats"],
+      },
+    ],
+  },
+  {
     id: "intervals",
     title: "Intervals",
     subtitle: "Distance between notes",
-    level: 2,
+    level: 4,
     lessons: [
       {
         id: "interval-basics",
@@ -93,7 +138,7 @@ export const CURRICULUM = [
     id: "triads",
     title: "Triads and Chord Qualities",
     subtitle: "The emotional building blocks",
-    level: 3,
+    level: 5,
     lessons: [
       {
         id: "triad-basics",
@@ -123,7 +168,7 @@ export const CURRICULUM = [
     id: "progressions",
     title: "Chord Progressions",
     subtitle: "How chords connect and flow",
-    level: 4,
+    level: 6,
     lessons: [
       {
         id: "diatonic-chords",
@@ -153,7 +198,7 @@ export const CURRICULUM = [
     id: "melody-harmony",
     title: "Melody and Harmony",
     subtitle: "Notes over chords",
-    level: 5,
+    level: 7,
     lessons: [
       {
         id: "melody-construction",
@@ -228,61 +273,270 @@ export function getUnlockedThrough(startLevel, completedLessons) {
   return unlocked;
 }
 
-export const PLACEMENT_TEST = [
+// Placement is a map, not a pass/fail test. Questions are grouped into
+// sections that mirror the curriculum modules, and every question offers an
+// honest "I don't know yet" option alongside the choices — guessing
+// shouldn't be able to skip a learner past something they haven't learned,
+// and admitting a gap shouldn't feel like failure.
+//
+// Question shape: { q, staff?, demo?, options, correct, why }
+// - staff / demo render the same way lesson quiz questions do.
+// - "why" is used for the gentle, encouraging reveal after an answer.
+export const PLACEMENT_SECTIONS = [
   {
-    id: "read-treble",
-    type: "multiple-choice",
-    question: "What note is this?",
-    options: ["C", "G", "E", "B"],
-    correct: 1,
-    difficulty: 0,
+    id: "rhythm",
+    title: "Rhythm and Note Values",
+    moduleId: "rhythm-basics",
+    questions: [
+      {
+        q: "Which of these lasts the longest?",
+        options: ["Eighth note", "Quarter note", "Half note", "Whole note"],
+        correct: 3,
+        why: "A whole note is held the longest — four beats in common time.",
+      },
+      {
+        q: "Listen to this beat. How many clicks do you hear?",
+        demo: { kind: "rhythm", tokens: ["quarter", "quarter", "quarter", "quarter"], opts: { accentFirst: true } },
+        options: ["2", "3", "4", "6"],
+        correct: 2,
+        why: "Four even clicks — a steady quarter-note pulse.",
+      },
+      {
+        q: "A rest tells the performer to…",
+        options: ["Play softer", "Stay silent", "Play faster", "Repeat the note"],
+        correct: 1,
+        why: "A rest is musical silence — it still takes up time, just with no sound.",
+      },
+    ],
   },
   {
-    id: "major-scale",
-    type: "audio",
-    question: "Listen to this run of notes. What is it called?",
-    options: ["A major scale", "A minor scale", "A pentatonic scale", "A chromatic scale"],
-    correct: 0,
-    difficulty: 0,
+    id: "staff",
+    title: "Reading the Staff",
+    moduleId: "staff-notation",
+    questions: [
+      {
+        q: "What note is this?",
+        staff: { clef: "treble", notes: [{ letter: "G", octave: 4 }] },
+        options: ["C", "G", "E", "B"],
+        correct: 1,
+        why: "It sits on the second line, which the treble clef curls around and names G.",
+      },
+      {
+        q: "And this one, on the bass clef?",
+        staff: { clef: "bass", notes: [{ letter: "F", octave: 3 }] },
+        options: ["F", "A", "C", "D"],
+        correct: 0,
+        why: "The bass clef's two dots bracket the F line, second from the top.",
+      },
+      {
+        q: "The treble clef is also called the ___ clef.",
+        options: ["F", "G", "C", "D"],
+        correct: 1,
+        why: "Its spiral wraps around the G line — treble and G clef are the same thing.",
+      },
+      {
+        type: "tap-key",
+        q: "Tap the piano key that matches this note.",
+        staff: { clef: "treble", notes: [{ letter: "E", octave: 4 }] },
+        keyboardStart: 60,
+        keyboardOctaves: 1,
+        correctMidi: 64,
+        why: "That's the bottom line of the treble staff — E4, just above middle C.",
+      },
+    ],
   },
   {
-    id: "interval-4th",
-    type: "audio",
-    question: "Two notes, one after the other. What interval is that leap?",
-    options: ["Major third", "Perfect fourth", "Perfect fifth", "Octave"],
-    correct: 1,
-    difficulty: 1,
+    id: "scales",
+    title: "Scales and Keys",
+    moduleId: "scales-modes",
+    questions: [
+      {
+        q: "Listen to this scale. How would you describe it?",
+        demo: { kind: "sequence", notes: [60, 62, 64, 65, 67, 69, 71, 72], step: 0.28 },
+        options: ["Bright and settled", "Dark and wistful", "Floating, unresolved", "Tense, uneasy"],
+        correct: 0,
+        why: "That's the major scale — the bright, settled sound most melodies are built from.",
+      },
+      {
+        q: "And how about this one?",
+        demo: { kind: "sequence", notes: [57, 59, 60, 62, 64, 65, 67, 69], step: 0.28 },
+        options: ["Bright and settled", "Dark and wistful", "Floating, unresolved", "Tense, uneasy"],
+        correct: 1,
+        why: "The minor scale — same shape, but a few notes lowered gives it a wistful color.",
+      },
+      {
+        q: "In the C major scale, which note is \"home\" — the one everything resolves back to?",
+        options: ["C", "F", "G", "B"],
+        correct: 0,
+        why: "That's the tonic — the note the scale is named after and built around.",
+      },
+    ],
   },
   {
-    id: "chord-emotion",
-    type: "audio",
-    question: "What type of chord do you hear?",
-    options: ["Major", "Minor", "Suspended", "Diminished"],
-    correct: 0,
-    difficulty: 1,
+    id: "keys",
+    title: "Key Signatures",
+    moduleId: "key-signatures",
+    questions: [
+      {
+        q: "How many sharps does the key of G major have?",
+        options: ["0", "1", "2", "3"],
+        correct: 1,
+        why: "G major has one sharp — F♯ — which keeps its scale sounding just like C major's pattern, shifted up.",
+      },
+      {
+        q: "Sharps are added to key signatures in a fixed order. What is it?",
+        options: ["F–C–G–D–A–E–B", "B–E–A–D–G–C–F", "C–D–E–F–G–A–B", "A–B–C–D–E–F–G"],
+        correct: 0,
+        why: "F–C–G–D–A–E–B — the same order the Circle of Fifths adds sharps as you move clockwise.",
+      },
+      {
+        q: "Which key has no sharps or flats at all?",
+        options: ["G major", "F major", "C major", "D major"],
+        correct: 2,
+        why: "C major — every note is a white key with no accidentals, which is why it's the usual starting point.",
+      },
+    ],
   },
   {
-    id: "progression-ending",
-    type: "audio",
-    question: "Does this chord progression feel finished, or still going?",
-    options: ["Finished — it came home", "Still going — it's left hanging"],
-    correct: 0,
-    difficulty: 2,
+    id: "intervals",
+    title: "Intervals",
+    moduleId: "intervals",
+    questions: [
+      {
+        q: "Two notes, one after another — how big is that leap?",
+        demo: { kind: "interval", low: 60, semitones: 7 },
+        options: ["A small step", "A medium leap", "A wide, open leap", "A full octave"],
+        correct: 2,
+        why: "That's a perfect fifth — the same open leap that opens \"Twinkle Twinkle.\"",
+      },
+      {
+        q: "And this leap?",
+        demo: { kind: "interval", low: 60, semitones: 12 },
+        options: ["A small step", "A medium leap", "A wide, open leap", "A full octave — same note, higher"],
+        correct: 3,
+        why: "An octave — the same note name, one register up.",
+      },
+      {
+        q: "What's the smallest distance between two notes on the piano?",
+        options: ["A step", "A half-step", "A third", "A leap"],
+        correct: 1,
+        why: "A half-step (semitone) — one key to its very next neighbor, black or white.",
+      },
+    ],
   },
   {
-    id: "cadence-recognize",
-    type: "audio",
-    question: "This phrase ends V → I. What is that cadence called?",
-    options: ["Authentic", "Plagal", "Deceptive", "Half"],
-    correct: 0,
-    difficulty: 2,
+    id: "chords",
+    title: "Chords",
+    moduleId: "triads",
+    questions: [
+      {
+        q: "What kind of feeling does this chord have?",
+        demo: { kind: "chord", notes: [60, 64, 67] },
+        options: ["Bright and settled", "Tender and wistful", "Floating, unresolved", "Tense, uneasy"],
+        correct: 0,
+        why: "A major chord — bright and at rest.",
+      },
+      {
+        q: "And this one?",
+        demo: { kind: "chord", notes: [57, 60, 64] },
+        options: ["Bright and settled", "Tender and wistful", "Floating, unresolved", "Tense, uneasy"],
+        correct: 1,
+        why: "A minor chord — the lowered middle note softens it into something tender.",
+      },
+      {
+        q: "And this one?",
+        demo: { kind: "chord", notes: [59, 62, 65] },
+        options: ["Bright and settled", "Tender and wistful", "Floating, unresolved", "Tense, uneasy"],
+        correct: 3,
+        why: "A diminished chord — everything squeezed close together, uneasy and unresolved.",
+      },
+    ],
+  },
+  {
+    id: "progressions",
+    title: "Progressions and Cadences",
+    moduleId: "progressions",
+    questions: [
+      {
+        q: "Does this chord progression feel finished, or still going?",
+        demo: { kind: "progression", chords: [[60, 64, 67], [65, 69, 72], [67, 71, 74], [60, 64, 67]] },
+        options: ["Finished — it came home", "Still going — it's left hanging"],
+        correct: 0,
+        why: "It ends back on the home chord — your ear hears the sentence close.",
+      },
+      {
+        q: "And this one?",
+        demo: { kind: "progression", chords: [[60, 64, 67], [65, 69, 72], [60, 64, 67], [67, 71, 74]] },
+        options: ["Finished — it came home", "Still going — it's left hanging"],
+        correct: 1,
+        why: "It ends on the away chord — a comma, not a period. Your ear is still waiting.",
+      },
+      {
+        q: "A progression that ends by returning to the home chord is like a sentence ending with a…",
+        options: ["Comma", "Question mark", "Period", "Exclamation point"],
+        correct: 2,
+        why: "A period — the phrase has fully resolved and come to rest.",
+      },
+    ],
   },
 ];
 
-export function getPlacementLevel(correctCount) {
-  if (correctCount <= 1) return 0; // Start at staff basics
-  if (correctCount <= 2) return 1; // Start at scales
-  if (correctCount <= 3) return 2; // Start at intervals
-  if (correctCount <= 4) return 3; // Start at chords
-  return 4; // Start at progressions
+// A freshly randomized copy of the placement sections: question order within
+// each section and answer-option order within each question both shuffle.
+// Section order itself stays fixed (it mirrors the curriculum's teaching
+// order), but nothing else is memorizable by position — retaking the check,
+// or just remembering "it's always the third option," won't help.
+export function buildShuffledPlacementSections() {
+  return PLACEMENT_SECTIONS.map((section) => ({
+    ...section,
+    questions: shuffle(section.questions).map((q) => {
+      // Tap-key questions have no options list to shuffle — the keyboard
+      // itself is the answer surface.
+      if (!q.options) return q;
+      const { options, correct } = shuffleOptions(q.options, q.correct);
+      return { ...q, options, correct };
+    }),
+  }));
+}
+
+// Result for one section: how many were right vs. flagged as not-yet-known,
+// and a status used both for the "know well" / "we'll work on" summary and
+// for suggesting where to start.
+function summarizeSection(section, outcomes) {
+  const total = section.questions.length;
+  const correct = outcomes.filter((o) => o === "correct").length;
+  const dontKnow = outcomes.filter((o) => o === "dontknow").length;
+  let status = "new";
+  if (total > 0) {
+    if (correct / total >= 0.66) status = "know-well";
+    else if (correct > 0) status = "developing";
+  }
+  return {
+    id: section.id,
+    title: section.title,
+    moduleId: section.moduleId,
+    moduleIndex: getModuleById(section.moduleId) ? CURRICULUM.indexOf(getModuleById(section.moduleId)) : 0,
+    total,
+    correct,
+    dontKnow,
+    status,
+  };
+}
+
+// outcomesBySection: { [sectionId]: Array<"correct" | "wrong" | "dontknow"> }
+// Returns per-section results plus a recommended starting module — the
+// earliest section that isn't solidly known, so nothing gets skipped just
+// because a later section went well.
+export function computePlacementResult(outcomesBySection) {
+  const sections = PLACEMENT_SECTIONS.map((section) =>
+    summarizeSection(section, outcomesBySection[section.id] || [])
+  );
+
+  const knowWell = sections.filter((s) => s.status === "know-well");
+  const toLearn = sections.filter((s) => s.status !== "know-well");
+
+  const firstGap = sections.find((s) => s.status !== "know-well");
+  const recommendedModuleIndex = firstGap ? firstGap.moduleIndex : sections[sections.length - 1].moduleIndex;
+
+  return { sections, knowWell, toLearn, recommendedModuleIndex };
 }

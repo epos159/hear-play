@@ -2,8 +2,11 @@ import { useMemo } from "react";
 import { playNote } from "../audio.js";
 import { noteName } from "../theory.js";
 
-// Interactive two-octave keyboard. `litNotes` (midi array) highlights chord tones.
-export default function Keyboard({ startMidi = 60, octaves = 2, litNotes = [] }) {
+// Interactive two-octave keyboard. `litNotes` (midi array) highlights chord
+// tones. `onKeyTap`, if given, fires (in addition to the sound) whenever a
+// key is pressed — used to turn the keyboard into an answer surface for
+// "tap the note" questions.
+export default function Keyboard({ startMidi = 60, octaves = 2, litNotes = [], onKeyTap }) {
   const litSet = useMemo(() => new Set(litNotes), [litNotes]);
 
   const whites = [];
@@ -22,13 +25,18 @@ export default function Keyboard({ startMidi = 60, octaves = 2, litNotes = [] })
     }
   }
 
+  const handleTap = (midi) => {
+    playNote(midi);
+    onKeyTap?.(midi);
+  };
+
   return (
     <div className="keyboard" role="group" aria-label="Piano keyboard">
       {whites.map(({ midi }) => (
         <button
           key={midi}
           className={`key-white${litSet.has(midi) ? " lit" : ""}`}
-          onPointerDown={() => playNote(midi)}
+          onPointerDown={() => handleTap(midi)}
           aria-label={`${noteName(midi)} key`}
         >
           {midi % 12 === 0 && <span className="label">C</span>}
@@ -39,7 +47,7 @@ export default function Keyboard({ startMidi = 60, octaves = 2, litNotes = [] })
           key={midi}
           className={`key-black${litSet.has(midi) ? " lit" : ""}`}
           style={{ left: `${(index / totalWhites) * 100 - 4}%` }}
-          onPointerDown={() => playNote(midi)}
+          onPointerDown={() => handleTap(midi)}
           aria-label={`${noteName(midi)} key`}
         />
       ))}

@@ -91,3 +91,27 @@ export function playSequence(notes, stepDuration = 0.3, { gain = 0.35 } = {}) {
     playNote(midi, { when: i * stepDuration, dur: stepDuration * 0.8, gain });
   });
 }
+
+// Beats each note value gets, assuming a quarter note = 1 beat.
+export const NOTE_VALUE_BEATS = { whole: 4, half: 2, quarter: 1, eighth: 0.5, sixteenth: 0.25 };
+
+// Play a rhythm as a click track: tokens are note-value names ("quarter",
+// "eighth", ...) or a rest of that value ("rest-quarter"). Rests advance the
+// clock silently. The first beat can be accented to teach downbeat feel.
+export function playRhythm(tokens, { beatDur = 0.45, midi = 76, gain = 0.32, accentFirst = false } = {}) {
+  let t = 0;
+  tokens.forEach((token, i) => {
+    const isRest = token.startsWith("rest-");
+    const beats = NOTE_VALUE_BEATS[isRest ? token.slice(5) : token] ?? 1;
+    if (!isRest) {
+      const accent = accentFirst && i === 0;
+      playNote(midi, {
+        when: t,
+        dur: Math.min(beats * beatDur * 0.65, beatDur * 0.9),
+        gain: accent ? gain * 1.35 : gain,
+      });
+    }
+    t += beats * beatDur;
+  });
+  return t;
+}

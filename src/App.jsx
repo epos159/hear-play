@@ -17,10 +17,18 @@ const TABS = [
 export default function App() {
   const [tab, setTab] = useState("home");
   const [progress, setProgress] = useState(loadProgress);
+  // Set when a lesson hands off to a specific ear-training game, so Listen
+  // opens straight into it instead of the game picker.
+  const [pendingGame, setPendingGame] = useState(null);
 
   const onCorrect = () => setProgress((p) => recordListen(p));
   const onExplore = () => setProgress((p) => recordExploration(p));
   const onLessonComplete = (updates) => setProgress((p) => updateLearning(p, updates));
+
+  const go = (nextTab, opts) => {
+    if (opts?.game) setPendingGame(opts.game);
+    setTab(nextTab);
+  };
 
   return (
     <div className="app">
@@ -31,9 +39,11 @@ export default function App() {
         {progress.streak > 1 && <span className="streak">♪ {progress.streak}-day streak</span>}
       </header>
 
-      {tab === "home" && <Home progress={progress} go={setTab} />}
-      {tab === "learn" && <Learn progress={progress} onLessonComplete={onLessonComplete} go={setTab} />}
-      {tab === "listen" && <Listen onCorrect={onCorrect} />}
+      {tab === "home" && <Home progress={progress} go={go} />}
+      {tab === "learn" && <Learn progress={progress} onLessonComplete={onLessonComplete} go={go} />}
+      {tab === "listen" && (
+        <Listen onCorrect={onCorrect} initialGame={pendingGame} onGameOpened={() => setPendingGame(null)} />
+      )}
       {tab === "play" && <Play onExplore={onExplore} />}
       {tab === "create" && <Create onExplore={onExplore} />}
 

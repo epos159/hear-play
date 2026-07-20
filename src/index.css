@@ -264,6 +264,39 @@ button {
   margin-top: 2px;
 }
 
+/* Honest "not yet" option — sits apart from the answer grid, neutral tone,
+   never styled as wrong. */
+.option-dontknow {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: none;
+  border: 1.5px dashed rgba(58, 44, 33, 0.22);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--walnut-soft);
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.option-dontknow:hover:not(:disabled) {
+  border-color: var(--brass);
+  color: var(--walnut);
+}
+
+.option-dontknow.chosen {
+  border-style: solid;
+  border-color: var(--brass);
+  background: rgba(176, 125, 63, 0.08);
+  color: var(--walnut);
+}
+
+.option-dontknow:disabled {
+  cursor: default;
+}
+
 /* ————— Reveal / why panel ————— */
 .why {
   margin-top: 14px;
@@ -839,4 +872,73 @@ button {
   font-weight: 700;
   color: var(--brass);
   white-space: nowrap;
+}
+
+/* ————— Placement results ————— */
+.placement-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.placement-list li {
+  font-size: 14.5px;
+  padding: 5px 0;
+}
+
+/* ————— Rhythm lesson blocks ————— */
+.note-value-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.note-value-bar {
+  height: 14px;
+  min-width: 22px;
+  background: linear-gradient(90deg, var(--ember), var(--ember-soft));
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.note-value-label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 13.5px;
+}
+
+.note-value-label strong {
+  font-size: 14.5px;
+}
+
+.note-value-label span {
+  color: var(--walnut-soft);
+  font-size: 12.5px;
+}
+
+.beat-row {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.beat-dot {
+  flex: 1;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid rgba(58, 44, 33, 0.2);
+  color: var(--walnut-soft);
+  font-weight: 700;
+  font-size: 15px;
+  background: #fffdf8;
+}
+
+.beat-dot.strong {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
 }

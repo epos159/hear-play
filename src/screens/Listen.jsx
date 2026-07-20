@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { playChord, playInterval, playProgression } from "../audio.js";
 import { CHORD_QUALITIES, buildChord, INTERVALS, CADENCES, randomFrom, shuffle } from "../theory.js";
 
@@ -8,8 +8,14 @@ const GAMES = [
   { id: "cadence", title: "Finished, or still going?", sub: "Musical sentences end with periods too. Hear the difference." },
 ];
 
-export default function Listen({ onCorrect }) {
-  const [game, setGame] = useState(null);
+export default function Listen({ onCorrect, initialGame = null, onGameOpened }) {
+  const [game, setGame] = useState(initialGame);
+
+  // If a lesson handed off to a specific game, consume that intent once so
+  // navigating back to Listen normally still lands on the picker.
+  useEffect(() => {
+    if (initialGame) onGameOpened?.();
+  }, [initialGame, onGameOpened]);
 
   if (!game) {
     return (
@@ -57,7 +63,7 @@ function ChordEmotion({ back, onCorrect }) {
         ▶ &nbsp;{played ? "Hear it again" : "Play the chord"}
       </button>
 
-      <div className="options">
+      <div className="options" role="group" aria-label="Answer options">
         {Object.entries(CHORD_QUALITIES).map(([q, def]) => {
           let cls = "option";
           if (round.answered) {
@@ -65,7 +71,7 @@ function ChordEmotion({ back, onCorrect }) {
             else if (q === round.answered) cls += " wrong";
           }
           return (
-            <button key={q} className={cls} onClick={() => answer(q)}>
+            <button key={q} className={cls} onClick={() => answer(q)} aria-pressed={q === round.answered}>
               {def.feeling.split(" · ")[0]}
               <span className="hint">{def.feeling.split(" · ").slice(1).join(" · ")}</span>
             </button>
@@ -75,7 +81,7 @@ function ChordEmotion({ back, onCorrect }) {
 
       {round.answered && (
         <>
-          <div className="why">
+          <div className="why" role="status" aria-live="polite">
             <strong>{CHORD_QUALITIES[round.quality].label} chord.</strong>{" "}
             {CHORD_QUALITIES[round.quality].why}
           </div>
@@ -114,7 +120,7 @@ function IntervalGame({ back, onCorrect }) {
         ▶ &nbsp;{played ? "Hear it again" : "Play the two notes"}
       </button>
 
-      <div className="options single-col">
+      <div className="options single-col" role="group" aria-label="Answer options">
         {round.options.map((opt) => {
           let cls = "option";
           if (round.answered) {
@@ -122,7 +128,7 @@ function IntervalGame({ back, onCorrect }) {
             else if (opt === round.answered) cls += " wrong";
           }
           return (
-            <button key={opt.semitones} className={cls} onClick={() => answer(opt)}>
+            <button key={opt.semitones} className={cls} onClick={() => answer(opt)} aria-pressed={opt === round.answered}>
               {opt.label}
               <span className="hint">{opt.anchor}</span>
             </button>
@@ -132,7 +138,7 @@ function IntervalGame({ back, onCorrect }) {
 
       {round.answered && (
         <>
-          <div className="why">
+          <div className="why" role="status" aria-live="polite">
             <strong>{round.target.label}.</strong> It sounds {round.target.character}. When you hear this leap in the wild, think of {round.target.anchor}.
           </div>
           <NextButton onClick={() => { setRound(newIntervalRound()); setPlayed(false); }} />
@@ -163,7 +169,7 @@ function CadenceGame({ back, onCorrect }) {
         ▶ &nbsp;{played ? "Hear the phrase again" : "Play the phrase"}
       </button>
 
-      <div className="options">
+      <div className="options" role="group" aria-label="Answer options">
         {[
           { val: true, label: "Finished", hint: "it came home" },
           { val: false, label: "Still going", hint: "it's left hanging" },
@@ -174,7 +180,7 @@ function CadenceGame({ back, onCorrect }) {
             else if (val === round.answered) cls += " wrong";
           }
           return (
-            <button key={label} className={cls} onClick={() => answer(val)}>
+            <button key={label} className={cls} onClick={() => answer(val)} aria-pressed={val === round.answered}>
               {label}
               <span className="hint">{hint}</span>
             </button>
@@ -184,7 +190,7 @@ function CadenceGame({ back, onCorrect }) {
 
       {round.answered !== null && (
         <>
-          <div className="why">
+          <div className="why" role="status" aria-live="polite">
             <strong>{round.cadence.finished ? "Finished." : "Still going."}</strong> {round.cadence.why}
           </div>
           <NextButton onClick={() => { setRound(newCadenceRound()); setPlayed(false); }} />
@@ -196,10 +202,14 @@ function CadenceGame({ back, onCorrect }) {
 
 /* ————— Shared bits ————— */
 function GameFrame({ back, title, sub, children }) {
+  const headingRef = useRef(null);
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
   return (
     <div className="fade-in">
       <button className="back-link" onClick={back}>← All listening games</button>
-      <h1 className="screen-title">{title}</h1>
+      <h1 className="screen-title" ref={headingRef} tabIndex={-1}>{title}</h1>
       <p className="screen-sub">{sub}</p>
       <div className="card">{children}</div>
     </div>
