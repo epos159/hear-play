@@ -1,95 +1,94 @@
-import { playSequence } from "../../audio.js";
+import Staff from "../Staff.jsx";
+import { DemoCard, Tip } from "./blocks.jsx";
+import { C_MAJOR_SCALE } from "../../demos.js";
 
 export default function LessonMajorScale() {
-  const playMajorScale = () => {
-    const cMajor = [60, 62, 64, 65, 67, 69, 71, 72]; // C D E F G A B C
-    playSequence(cMajor, 0.3);
-  };
-
   return (
     <div>
       <h2>The Major Scale</h2>
-
       <p>
-        A <strong>scale</strong> is a sequence of notes in ascending or descending pitch. The most common scale is the <strong>major scale</strong> — also known as the do-re-mi pattern.
+        A <strong>scale</strong> is a ladder of notes. The <strong>major scale</strong> — the
+        do-re-mi pattern — is the most important ladder in Western music: bright, settled, and the
+        reference point everything else is measured against.
       </p>
 
-      <button
-        className="btn btn-primary"
-        onClick={playMajorScale}
-        style={{ marginBottom: 20 }}
+      <DemoCard
+        title="C major, bottom to top"
+        demo={{ kind: "sequence", notes: C_MAJOR_SCALE }}
+        playLabel="Play the scale"
       >
-        ▶ Play C Major Scale
-      </button>
+        Sing along: do, re, mi, fa, sol, la, ti, do.
+      </DemoCard>
 
-      <h3>The Major Scale Pattern</h3>
+      <Staff
+        clef="treble"
+        notes={[
+          { letter: "C", octave: 4, label: "do" },
+          { letter: "D", octave: 4, label: "re" },
+          { letter: "E", octave: 4, label: "mi" },
+          { letter: "F", octave: 4, label: "fa" },
+          { letter: "G", octave: 4, label: "sol" },
+          { letter: "A", octave: 4, label: "la" },
+          { letter: "B", octave: 4, label: "ti" },
+          { letter: "C", octave: 5, label: "do" },
+        ]}
+        caption="C major on the staff — tap any note"
+      />
+
+      <h3>The Recipe</h3>
       <p>
-        Every major scale follows the same pattern of distances (in semitones):
+        What makes it sound "major" is the spacing between steps. In half-steps, every major scale —
+        no matter where it starts — follows:
+      </p>
+      <div className="formula-box">
+        W – W – H – W – W – W – H
+        <span>whole, whole, half, whole, whole, whole, half</span>
+      </div>
+      <p>
+        C major happens to use only white keys, which is why it's the beginner's home. Start the
+        same recipe on G and you'll need one black key (F♯); start on D, two. Same recipe, same
+        sound, different starting note — that's what a <strong>key</strong> is.
       </p>
 
-      <div style={{
-        background: "rgba(0,0,0,0.05)",
-        padding: "16px",
-        borderRadius: "8px",
-        margin: "12px 0",
-        fontFamily: "monospace",
-        textAlign: "center",
-      }}>
-        <div style={{ marginBottom: 8 }}>
-          <strong>2 – 2 – 1 – 2 – 2 – 2 – 1</strong>
-        </div>
-        <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
-          (whole step – whole step – half step – whole step – whole step – whole step – half step)
-        </div>
-      </div>
-
-      <h3>Scale Degrees</h3>
+      <h3>Each Note Has a Job</h3>
       <p>
-        Each note in the major scale has a name based on its position:
+        The 1st note (<strong>do</strong>) is home — the note the music wants to end on. The 5th
+        (<strong>sol</strong>) is its strongest partner. The 7th (<strong>ti</strong>) leans so hard
+        toward home it's called the <em>leading tone</em>. You'll meet these jobs formally in the
+        Scale Degrees lesson.
       </p>
 
-      <div style={{ marginTop: 12 }}>
-        <div style={{ marginBottom: 8 }}>
-          <strong>1. Tonic (Do)</strong> — The home note, the center of the key
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <strong>2. Supertonic (Re)</strong> — One step up
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <strong>3. Mediant (Mi)</strong> — The middle note of the first chord
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <strong>4. Subdominant (Fa)</strong> — Below the dominant
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <strong>5. Dominant (Sol)</strong> — The most important note after the tonic
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <strong>6. Submediant (La)</strong> — Below the mediant of the upper octave
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <strong>7. Leading Tone (Ti)</strong> — Pulls strongly toward the tonic
-        </div>
-        <div>
-          <strong>8. Tonic (Do)</strong> — We've come home, one octave higher
-        </div>
-      </div>
-
-      <h3>Why Major Sounds Bright</h3>
-      <p>
-        The major scale has a specific recipe of intervals that creates a bright, happy, settled feeling. Play with different keys — the recipe is always the same, just starting from a different note.
-      </p>
-
-      <div style={{
-        background: "rgba(0,0,0,0.03)",
-        padding: "12px",
-        borderRadius: "4px",
-        marginTop: 12,
-        fontSize: "0.9rem",
-        opacity: 0.8,
-      }}>
-        <strong>Try this:</strong> Sing "do-re-mi-fa-sol-la-ti-do" and feel how each note naturally leads to the next. That's the major scale.
-      </div>
+      <Tip>
+        One recipe, twelve starting notes, twelve major keys — all of them sound like "do-re-mi"
+        because the spacing, not the starting pitch, is what your ear recognizes.
+      </Tip>
     </div>
   );
 }
+
+export const quiz = [
+  {
+    q: "What is the step recipe of every major scale?",
+    options: ["W–W–H–W–W–W–H", "W–H–W–W–H–W–W", "H–W–W–H–W–W–W", "All whole steps"],
+    correct: 0,
+    why: "Whole–whole–half–whole–whole–whole–half. The two half-steps (mi→fa and ti→do) give the major scale its shape.",
+  },
+  {
+    q: "Listen. Is this a major scale?",
+    demo: { kind: "sequence", notes: [60, 62, 64, 65, 67, 69, 71, 72] },
+    options: ["Yes — it's do-re-mi all the way up", "No — something is lowered"],
+    correct: 0,
+    why: "That's C major: the familiar bright do-re-mi ladder with no alterations.",
+  },
+  {
+    q: "Why does G major need an F♯?",
+    options: [
+      "To make it sound different from C",
+      "To keep the W–W–H–W–W–W–H spacing when starting on G",
+      "Because sharps sound happier",
+      "It doesn't — G major has no sharps",
+    ],
+    correct: 1,
+    why: "The recipe is fixed. Starting on G, the seventh step must sit a half-step below G — that's F♯, not F.",
+  },
+];

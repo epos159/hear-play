@@ -1,27 +1,15 @@
 import { CURRICULUM } from "../curriculum.js";
 
-export default function LessonList({ startLevel, completedLessons, onSelectLesson }) {
+export default function LessonList({ startLevel, completedLessons, unlockedThrough, onSelectLesson }) {
   const done = (lesson) => completedLessons.includes(lesson.id);
   const moduleComplete = (m) => m.lessons.every(done);
-
-  // Everything up to the placement level is open; finishing a module opens the next.
-  let unlockedThrough = startLevel;
-  while (
-    unlockedThrough < CURRICULUM.length - 1 &&
-    moduleComplete(CURRICULUM[unlockedThrough])
-  ) {
-    unlockedThrough++;
-  }
 
   const activeModule = CURRICULUM.findIndex(
     (m, idx) => idx <= unlockedThrough && !moduleComplete(m)
   );
 
   return (
-    <div className="fade-in">
-      <h1 className="screen-title">Learn Music</h1>
-      <p className="screen-sub">From fundamentals through ear training. Finish a section to open the next.</p>
-
+    <div>
       {CURRICULUM.map((module, idx) => {
         const isAvailable = idx <= unlockedThrough;
         const isComplete = moduleComplete(module);

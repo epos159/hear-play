@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { getLessonById, getNextLesson } from "../curriculum.js";
+import { getLessonById, getNextLesson, getUnlockedThrough } from "../curriculum.js";
 import PlacementTest from "../components/PlacementTest.jsx";
 import LessonContent from "../components/LessonContent.jsx";
 import LessonList from "../components/LessonList.jsx";
+import TopicIndex from "../components/TopicIndex.jsx";
 
 export default function Learn({ progress, onLessonComplete, go }) {
   const [state, setLearnState] = useState(() => {
@@ -10,6 +11,11 @@ export default function Learn({ progress, onLessonComplete, go }) {
     if (progress.currentLesson) return { view: "lesson", lessonId: progress.currentLesson };
     return { view: "overview" };
   });
+  const [overviewMode, setOverviewMode] = useState("course"); // "course" | "topics"
+
+  const completedLessons = progress.completedLessons || [];
+  const startLevel = progress.startLevel || 0;
+  const unlockedThrough = getUnlockedThrough(startLevel, completedLessons);
 
   const handlePlacementComplete = (level) => {
     setLearnState({ view: "overview" });
@@ -23,19 +29,19 @@ export default function Learn({ progress, onLessonComplete, go }) {
 
   const handleLessonComplete = () => {
     const lesson = getLessonById(state.lessonId);
-    const completedLessons = progress.completedLessons.includes(state.lessonId)
-      ? progress.completedLessons
-      : [...progress.completedLessons, state.lessonId];
+    const completed = completedLessons.includes(state.lessonId)
+      ? completedLessons
+      : [...completedLessons, state.lessonId];
 
     if (lesson?.practice) {
       // Lessons that end in ear training hand off to the Listen tab.
-      onLessonComplete({ completedLessons, currentLesson: null });
+      onLessonComplete({ completedLessons: completed, currentLesson: null });
       go("listen");
       return;
     }
 
     const next = getNextLesson(state.lessonId);
-    onLessonComplete({ completedLessons, currentLesson: next ? next.id : null });
+    onLessonComplete({ completedLessons: completed, currentLesson: next ? next.id : null });
     setLearnState(next ? { view: "lesson", lessonId: next.id } : { view: "overview" });
   };
 
@@ -51,7 +57,9 @@ export default function Learn({ progress, onLessonComplete, go }) {
   if (state.view === "lesson") {
     return (
       <LessonContent
+        key={state.lessonId}
         lessonId={state.lessonId}
+        isCompleted={completedLessons.includes(state.lessonId)}
         onComplete={handleLessonComplete}
         onBack={backToOverview}
       />
@@ -59,10 +67,39 @@ export default function Learn({ progress, onLessonComplete, go }) {
   }
 
   return (
-    <LessonList
-      startLevel={progress.startLevel || 0}
-      completedLessons={progress.completedLessons || []}
-      onSelectLesson={handleStartLesson}
-    />
+    <div className="fade-in">
+      <h1 className="screen-title">Learn Music</h1>
+      <p className="screen-sub">From fundamentals through ear training. Finish a section to open the next.</p>
+
+      <div className="seg-control">
+        <button
+          className={overviewMode === "course" ? "active" : ""}
+          onClick={() => setOverviewMode("course")}
+        >
+          Course
+        </button>
+        <button
+          className={overviewMode === "topics" ? "active" : ""}
+          onClick={() => setOverviewMode("topics")}
+        >
+          Review a topic
+        </button>
+      </div>
+
+      {overviewMode === "course" ? (
+        <LessonList
+          startLevel={startLevel}
+          completedLessons={completedLessons}
+          unlockedThrough={unlockedThrough}
+          onSelectLesson={handleStartLesson}
+        />
+      ) : (
+        <TopicIndex
+          completedLessons={completedLessons}
+          unlockedThrough={unlockedThrough}
+          onSelectLesson={handleStartLesson}
+        />
+      )}
+    </div>
   );
 }

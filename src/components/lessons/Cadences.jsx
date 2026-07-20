@@ -1,110 +1,89 @@
-import { playProgression } from "../../audio.js";
+import { DemoCard, Tip } from "./blocks.jsx";
+import { V } from "../../demos.js";
 
 export default function LessonCadences() {
   return (
     <div>
-      <h2>Musical Punctuation: Cadences</h2>
-
+      <h2>Cadences: Musical Punctuation</h2>
       <p>
-        Music has <strong>punctuation</strong> just like sentences. Some chord progressions sound finished (a period), while others sound like they're still going (a comma). These endings are called <strong>cadences</strong>.
+        Music speaks in phrases, and phrases end with punctuation. A <strong>cadence</strong> is
+        how a phrase closes — with a period, a comma, or a plot twist. Four standard endings cover
+        nearly everything you'll hear.
       </p>
 
-      <h3>The Two Main Cadences</h3>
+      <DemoCard
+        title="Authentic cadence (V → I) · the period"
+        demo={{ kind: "progression", chords: [V.C, V.G, V.C] }}
+        playLabel="Hear C – G – C"
+      >
+        The strongest close in music: maximum pull, full landing. When a piece ends definitively,
+        this is almost always why.
+      </DemoCard>
 
-      <div style={{ marginTop: 20 }}>
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Authentic Cadence (V → I)</div>
-          <div style={{ marginBottom: 12, opacity: 0.8 }}>
-            Dominant chord → Tonic chord. This feels <strong>finished</strong>, resolved, like a period.
-          </div>
-          <button className="btn btn-small" onClick={() => playProgression([[60, 64, 67], [67, 71, 74], [60, 64, 67]])}>
-            ▶ Play: C – G – C
-          </button>
-          <p style={{ marginTop: 12, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            The V chord pulls away from home (C). The I chord brings you back. That return home feels complete.
-          </p>
-        </div>
+      <DemoCard
+        title="Plagal cadence (IV → I) · the amen"
+        demo={{ kind: "progression", chords: [V.C, V.F, V.C] }}
+        playLabel="Hear C – F – C"
+      >
+        Finished, but gentler — the soft "A-men" that ends hymns. A settling rather than an arrival.
+      </DemoCard>
 
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Plagal Cadence (IV → I)</div>
-          <div style={{ marginBottom: 12, opacity: 0.8 }}>
-            Subdominant chord → Tonic chord. Feels finished, but softer. Sometimes called the "Amen cadence."
-          </div>
-          <button className="btn btn-small" onClick={() => playProgression([[60, 64, 67], [65, 69, 72], [60, 64, 67]])}>
-            ▶ Play: C – F – C
-          </button>
-          <p style={{ marginTop: 12, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            Less dramatic than authentic, but still feels like home. You hear this at the end of hymns.
-          </p>
-        </div>
+      <DemoCard
+        title="Half cadence (ends on V) · the comma"
+        demo={{ kind: "progression", chords: [V.C, V.F, V.G] }}
+        playLabel="Hear C – F – G…"
+      >
+        The phrase stops on the pull chord itself — left hanging mid-air. Your ear knows another
+        phrase must follow.
+      </DemoCard>
 
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Half Cadence (I → V or IV → V)</div>
-          <div style={{ marginBottom: 12, opacity: 0.8 }}>
-            Ending on the Dominant chord. This feels <strong>incomplete</strong>, like a comma or question mark.
-          </div>
-          <button className="btn btn-small" onClick={() => playProgression([[60, 64, 67], [65, 69, 72], [67, 71, 74]])}>
-            ▶ Play: C – F – G
-          </button>
-          <p style={{ marginTop: 12, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            Your ear is waiting for something to come next. It's unresolved, hanging in the air.
-          </p>
-        </div>
+      <DemoCard
+        title="Deceptive cadence (V → vi) · the plot twist"
+        demo={{ kind: "progression", chords: [V.C, V.G, V.Am] }}
+        playLabel="Hear C – G – Am"
+      >
+        Everything promises home… and lands on the shadow chord instead. Composers use it to
+        stretch a phrase just when you expected it to end.
+      </DemoCard>
 
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Deceptive Cadence (V → vi)</div>
-          <div style={{ marginBottom: 12, opacity: 0.8 }}>
-            Dominant → Relative minor. Feels <strong>unresolved</strong>, surprising, like an unexpected ending.
-          </div>
-          <button className="btn btn-small" onClick={() => playProgression([[60, 64, 67], [67, 71, 74], [57, 60, 64]])}>
-            ▶ Play: C – G – Am
-          </button>
-          <p style={{ marginTop: 12, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            You expect to land on C (I), but instead land on A minor (vi). The expectation is broken — that's what makes it deceptive.
-          </p>
-        </div>
-      </div>
-
-      <h3>Recognizing Cadences</h3>
+      <h3>Listening for Cadences</h3>
       <p>
-        When you hear the end of a phrase, ask yourself:
+        At the end of any phrase ask: did it land (period), soften down (amen), hang (comma), or
+        swerve (twist)? That's the entire skill — and it's exactly what the practice game drills.
       </p>
-      <ul>
-        <li>Does it feel finished, or still waiting?</li>
-        <li>Is it a strong resolution, or subtle and soft?</li>
-        <li>Did it surprise me?</li>
-      </ul>
 
-      <div style={{
-        background: "rgba(0,0,0,0.03)",
-        padding: "12px",
-        borderRadius: "4px",
-        marginTop: 20,
-        fontSize: "0.9rem",
-        opacity: 0.8,
-      }}>
-        <strong>Practice tip:</strong> Listen to the end of songs on the radio or in music you love. Can you hear where the phrases end? Can you feel if it's finished or still going?
-      </div>
-
+      <Tip>
+        Cadences are why music feels like language. The V → I motion is the engine: V builds the
+        expectation, and every cadence type is defined by how it honors or dodges that promise.
+      </Tip>
     </div>
   );
 }
+
+export const quiz = [
+  {
+    q: "Listen. Which cadence ends this phrase?",
+    demo: { kind: "progression", chords: [[60, 64, 67], [67, 71, 74], [60, 64, 67]] },
+    options: ["Authentic (V → I)", "Plagal (IV → I)", "Half (ends on V)", "Deceptive (V → vi)"],
+    correct: 0,
+    why: "G to C — the strong pull resolving fully home. The musical period.",
+  },
+  {
+    q: "Listen. Finished or left hanging?",
+    demo: { kind: "progression", chords: [[60, 64, 67], [65, 69, 72], [67, 71, 74]] },
+    options: ["Finished — it landed", "Hanging — it stopped on the pull chord"],
+    correct: 1,
+    why: "That was a half cadence: the phrase parks on V, mid-sentence. Another phrase has to answer it.",
+  },
+  {
+    q: "A deceptive cadence (V → vi) works by…",
+    options: [
+      "Ending louder than expected",
+      "Promising home but landing on the shadow chord",
+      "Repeating the last chord twice",
+      "Skipping the V chord entirely",
+    ],
+    correct: 1,
+    why: "V sets up the expectation of I; vi swerves into it. The surprise is the point — it extends the story.",
+  },
+];

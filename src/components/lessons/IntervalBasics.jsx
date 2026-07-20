@@ -1,113 +1,65 @@
-import { playInterval } from "../../audio.js";
+import { DemoCard, Tip } from "./blocks.jsx";
 
 export default function LessonIntervalBasics() {
   return (
     <div>
       <h2>What Are Intervals?</h2>
-
       <p>
-        An <strong>interval</strong> is the distance between two notes. The bigger the jump in pitch, the larger the interval.
+        An <strong>interval</strong> is the distance between two notes. Melodies are nothing but a
+        chain of intervals — learn to hear the distances and you can carry any tune.
       </p>
 
-      <h3>Measuring Intervals</h3>
+      <h3>The Measuring Unit: Half-Steps</h3>
       <p>
-        Intervals are measured in <strong>semitones</strong> (also called half steps) — the smallest distance on a piano keyboard or between any two adjacent notes.
+        The smallest distance is a <strong>half-step</strong> (semitone) — one piano key to its
+        immediate neighbor, black or white. Two half-steps make a <strong>whole step</strong>.
+        Twelve make an octave.
       </p>
 
-      <ul>
-        <li><strong>1 semitone</strong> = one piano key (black or white)</li>
-        <li><strong>2 semitones</strong> = one whole step</li>
-        <li><strong>12 semitones</strong> = one octave (same note name, different pitch)</li>
-      </ul>
+      <h3>Meet the Landmarks</h3>
+      <DemoCard title="Half-step (minor 2nd) — 1 semitone" demo={{ kind: "interval", low: 60, semitones: 1 }}>
+        Uncomfortably close — the "Jaws" crawl. Notes this near each other create friction.
+      </DemoCard>
+      <DemoCard title="Whole step (major 2nd) — 2 semitones" demo={{ kind: "interval", low: 60, semitones: 2 }}>
+        The basic walking step. In "Happy Birthday," the first rise ("py–birth") is this interval.
+      </DemoCard>
+      <DemoCard title="Perfect 4th — 5 semitones" demo={{ kind: "interval", low: 60, semitones: 5 }}>
+        Sturdy and ceremonial — "Here Comes the Bride" opens with this leap.
+      </DemoCard>
+      <DemoCard title="Perfect 5th — 7 semitones" demo={{ kind: "interval", low: 60, semitones: 7 }}>
+        Open and heroic — "Twinkle Twinkle" leaps a 5th on twin-kle.
+      </DemoCard>
+      <DemoCard title="Octave — 12 semitones" demo={{ kind: "interval", low: 60, semitones: 12 }}>
+        "Some-where" in "Over the Rainbow." The same note, one register higher — a leap home.
+      </DemoCard>
 
-      <h3>Common Intervals</h3>
-
-      <div style={{ marginTop: 20 }}>
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Minor 2nd (1 semitone)</div>
-          <button className="btn btn-small" onClick={() => playInterval(60, 1)}>
-            ▶ Hear it
-          </button>
-          <p style={{ marginTop: 8, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            This is the smallest interval — sounds uncomfortable, nearly the same note.
-          </p>
-        </div>
-
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Major 2nd (2 semitones)</div>
-          <button className="btn btn-small" onClick={() => playInterval(60, 2)}>
-            ▶ Hear it
-          </button>
-          <p style={{ marginTop: 8, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            A step — the most basic move. Think "Happy Birthday": the first rise, on "py–birth," is a major 2nd.
-          </p>
-        </div>
-
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Perfect 4th (5 semitones)</div>
-          <button className="btn btn-small" onClick={() => playInterval(60, 5)}>
-            ▶ Hear it
-          </button>
-          <p style={{ marginTop: 8, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            A sturdy, open sound. "Here Comes the Bride" starts with a 4th.
-          </p>
-        </div>
-
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-          marginBottom: 12,
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Perfect 5th (7 semitones)</div>
-          <button className="btn btn-small" onClick={() => playInterval(60, 7)}>
-            ▶ Hear it
-          </button>
-          <p style={{ marginTop: 8, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            The most perfect, open, heroic interval. "Twinkle Twinkle Little Star" starts with a 5th.
-          </p>
-        </div>
-
-        <div style={{
-          background: "rgba(0,0,0,0.05)",
-          padding: "16px",
-          borderRadius: "8px",
-        }}>
-          <div style={{ fontWeight: "bold", marginBottom: 8 }}>Octave (12 semitones)</div>
-          <button className="btn btn-small" onClick={() => playInterval(60, 12)}>
-            ▶ Hear it
-          </button>
-          <p style={{ marginTop: 8, marginBottom: 0, fontSize: "0.9rem", opacity: 0.8 }}>
-            The note repeats higher. Still feels like the same note, just "up there" in pitch.
-          </p>
-        </div>
-      </div>
-
-      <div style={{
-        background: "rgba(0,0,0,0.03)",
-        padding: "12px",
-        borderRadius: "4px",
-        marginTop: 20,
-        fontSize: "0.9rem",
-        opacity: 0.8,
-      }}>
-        <strong>Why this matters:</strong> Every melody is made of intervals. When you learn to hear intervals, you can sing any melody back, and predict what comes next in music.
-      </div>
+      <Tip>
+        Every melody you know is a chain of these distances. When you can name the links, you can
+        sing a tune from its sheet music — or write down one you've only heard.
+      </Tip>
     </div>
   );
 }
+
+export const quiz = [
+  {
+    q: "How many half-steps are in a whole step?",
+    options: ["One", "Two", "Three", "Twelve"],
+    correct: 1,
+    why: "A whole step is two half-steps — two neighboring keys' worth of distance on the piano.",
+  },
+  {
+    q: "Listen. Which interval is this?",
+    demo: { kind: "interval", low: 62, semitones: 7 },
+    options: ["Half-step", "Perfect 4th", "Perfect 5th", "Octave"],
+    correct: 2,
+    why: "That open, heroic leap is a perfect 5th — think \"twin-kle\" leaping upward.",
+  },
+  {
+    q: "Listen. Which interval is this?",
+    demo: { kind: "interval", low: 64, semitones: 12 },
+    options: ["Perfect 5th", "Whole step", "Perfect 4th", "Octave"],
+    correct: 3,
+    why: "Same note, higher home — a full octave, like \"some-where\" in Over the Rainbow.",
+  },
+];

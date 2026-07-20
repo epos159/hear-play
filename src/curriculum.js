@@ -214,11 +214,25 @@ export function getNextLesson(lessonId) {
   return null;
 }
 
+// Highest module index the learner can open: everything up to the placement
+// level, plus each further module earned by completing the one before it.
+export function getUnlockedThrough(startLevel, completedLessons) {
+  const done = (lesson) => completedLessons.includes(lesson.id);
+  let unlocked = startLevel;
+  while (
+    unlocked < CURRICULUM.length - 1 &&
+    CURRICULUM[unlocked].lessons.every(done)
+  ) {
+    unlocked++;
+  }
+  return unlocked;
+}
+
 export const PLACEMENT_TEST = [
   {
     id: "read-treble",
     type: "multiple-choice",
-    question: "Which note sits on the second line of the treble staff (counting from the bottom)?",
+    question: "What note is this?",
     options: ["C", "G", "E", "B"],
     correct: 1,
     difficulty: 0,

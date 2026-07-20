@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { PLACEMENT_TEST, getPlacementLevel } from "../curriculum.js";
 import { playChord, playInterval, playProgression, playSequence } from "../audio.js";
+import Staff from "./Staff.jsx";
+
+// Staff graphics for the notation questions, keyed by question id.
+const STAFF_FIGURES = {
+  "read-treble": { clef: "treble", notes: [{ letter: "G", octave: 4 }] },
+};
 
 // Audio demos for the listening questions, keyed by question id.
 const AUDIO_DEMOS = {
@@ -32,6 +38,7 @@ export default function PlacementTest({ onComplete }) {
   const isLast = index === PLACEMENT_TEST.length - 1;
   const answered = selected !== null;
   const playDemo = AUDIO_DEMOS[question.id];
+  const staffFigure = STAFF_FIGURES[question.id];
 
   const handleAnswer = (optionIndex) => {
     if (answered) return;
@@ -71,6 +78,10 @@ export default function PlacementTest({ onComplete }) {
         </div>
 
         <h2 style={{ marginBottom: 16 }}>{question.question}</h2>
+
+        {staffFigure && (
+          <Staff clef={staffFigure.clef} notes={staffFigure.notes} interactive={false} />
+        )}
 
         {playDemo && (
           <button
