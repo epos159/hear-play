@@ -45,7 +45,7 @@ export function buildChord(rootMidi, quality) {
 
 // Intervals with song anchors and character words
 export const INTERVALS = [
-  { semitones: 2, label: "A single step", anchor: "“Happy Birthday” (hap–py)", character: "walking to the next note" },
+  { semitones: 2, label: "A single step", anchor: "“Happy Birthday” (py–birth, the first rise)", character: "walking to the next note" },
   { semitones: 3, label: "A soft leap", anchor: "“Greensleeves” (a–las)", character: "gentle, a little melancholy" },
   { semitones: 4, label: "A warm leap", anchor: "“Oh When the Saints” (oh–when)", character: "warm and happy" },
   { semitones: 5, label: "A sturdy leap", anchor: "“Here Comes the Bride” (here–comes)", character: "rising, ceremonial" },

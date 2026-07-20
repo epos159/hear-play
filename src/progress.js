@@ -13,9 +13,22 @@ export function loadProgress() {
       lastDay: p.lastDay || null,
       listens: p.listens || 0,
       explorations: p.explorations || 0,
+      completedPlacement: p.completedPlacement || false,
+      startLevel: p.startLevel || 0,
+      currentLesson: p.currentLesson || null,
+      completedLessons: p.completedLessons || [],
     };
   } catch {
-    return { streak: 0, lastDay: null, listens: 0, explorations: 0 };
+    return {
+      streak: 0,
+      lastDay: null,
+      listens: 0,
+      explorations: 0,
+      completedPlacement: false,
+      startLevel: 0,
+      currentLesson: null,
+      completedLessons: [],
+    };
   }
 }
 
@@ -39,4 +52,8 @@ export function recordListen(p) {
 
 export function recordExploration(p) {
   return save(touchDay({ ...p, explorations: p.explorations + 1 }));
+}
+
+export function updateLearning(p, updates) {
+  return save({ ...p, ...updates });
 }

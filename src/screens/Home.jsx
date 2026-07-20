@@ -10,6 +10,14 @@ export default function Home({ progress, go }) {
       <h1 className="screen-title">{greeting}.</h1>
       <p className="screen-sub">Hear it first. The playing will follow.</p>
 
+      {!progress.completedPlacement && (
+        <button className="mode-card mode-listen" style={{ background: "linear-gradient(135deg, #66755a, #4a5741)" }} onClick={() => go("learn")}>
+          <div className="eyebrow">New here? Start here</div>
+          <h2>Learn the fundamentals</h2>
+          <p>Six quick questions find your level, then lessons take you from the staff to chords to musical sentences.</p>
+        </button>
+      )}
+
       <button className="mode-card mode-listen" onClick={() => go("listen")}>
         <div className="eyebrow">Away from the piano</div>
         <h2>Train your ear</h2>
