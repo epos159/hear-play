@@ -84,3 +84,10 @@ export function playPattern(chord, pattern) {
     });
   }
 }
+
+// Play a sequence of notes in order (for scales, etc.)
+export function playSequence(notes, stepDuration = 0.3, { gain = 0.35 } = {}) {
+  notes.forEach((midi, i) => {
+    playNote(midi, { when: i * stepDuration, dur: stepDuration * 0.8, gain });
+  });
+}

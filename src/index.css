@@ -481,3 +481,86 @@ button {
   color: var(--walnut);
   font-family: var(--font-display);
 }
+
+/* ————— Lesson system ————— */
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.lesson-card {
+  background: #fffdf8;
+  border: 1px solid rgba(58, 44, 33, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.lesson-card:hover:not(:disabled) {
+  border-color: var(--oak);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.lesson-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lesson-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+}
+
+.lesson-card .subtle {
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.lock-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 20px;
+  opacity: 0.5;
+}
+
+.tag {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(180, 92, 51, 0.15);
+  color: var(--ember);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.btn-small {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-small:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
