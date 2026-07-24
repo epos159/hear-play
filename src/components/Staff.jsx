@@ -1,12 +1,13 @@
-// SVG staff renderer — real five-line staff with drawn clefs, note heads,
-// ledger lines, and tap-to-hear. No fonts, no libraries: renders identically
-// on every device.
+// SVG staff renderer — five-line staff with clefs, note heads (by duration),
+// stems/flags, rests, ledger lines, and tap-to-hear.
 import { playNote } from "../audio.js";
 
 const SPACING = 12; // px between staff lines
 const LINES_Y = [30, 42, 54, 66, 78]; // top → bottom
 const BOTTOM_Y = 78;
 const STEM_LEN = 30;
+const HEAD_RX = 7;
+const HEAD_RY = 5.4;
 
 const LETTER_INDEX = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
 const LETTER_SEMIS = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
@@ -37,36 +38,40 @@ function ledgerLines(y) {
   return ys;
 }
 
-// Hand-drawn clefs (single stroked paths) so no music font is needed.
 function TrebleClef() {
   return (
-    <g stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
-      {/* bottom curl */}
-      <path d="M 30 84 C 28 90, 36 93, 38.5 87 C 39 85.5, 39 84, 39 82" />
-      {/* stem, top hook, left descent, bowl and spiral around the G line */}
-      <path d="M 39 82 L 39 20 C 39 15, 43 12, 44 17 C 45 22, 41 26, 37 30 C 31 36, 28 44, 29 51 C 30 60, 36 64, 41 63 C 47 61, 49 68, 45 74 C 41 79, 32 78, 30 71 C 28 64, 33 59, 37 60 C 40 61, 41 64, 39 66" />
-    </g>
+    <text
+      x="36"
+      y="76"
+      fontFamily="'Noto Music', 'Segoe UI Symbol', serif"
+      fontSize="66"
+      fill="currentColor"
+      textAnchor="middle"
+      style={{ userSelect: "none" }}
+      aria-hidden="true"
+    >
+      {"\u{1D11E}"}
+    </text>
   );
 }
 
 function BassClef() {
   return (
-    <g fill="currentColor">
-      <path
-        d="M 26 47 C 24 38, 32 28, 40 32 C 48 36, 47 48, 42 58 C 38 65, 32 70, 27 74"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        fill="none"
-        strokeLinecap="round"
-      />
-      <circle cx="26.5" cy="45" r="4" />
-      <circle cx="52" cy="36" r="2.6" />
-      <circle cx="52" cy="48" r="2.6" />
-    </g>
+    <text
+      x="34"
+      y="72"
+      fontFamily="'Noto Music', 'Segoe UI Symbol', serif"
+      fontSize="52"
+      fill="currentColor"
+      textAnchor="middle"
+      style={{ userSelect: "none" }}
+      aria-hidden="true"
+    >
+      {"\u{1D122}"}
+    </text>
   );
 }
 
-// Faint full-width labels for teaching the line/space names.
 function GuideLabels({ mode, clef, width }) {
   const letters = [];
   const startDia = BOTTOM_DIA[clef] + (mode === "spaces" ? 1 : 0);
@@ -91,23 +96,240 @@ function GuideLabels({ mode, clef, width }) {
   );
 }
 
+/** Open (hollow) vs filled notehead by duration. */
+function NoteHead({ x, y, open }) {
+  if (open) {
+    return (
+      <ellipse
+        cx={x}
+        cy={y}
+        rx={HEAD_RX}
+        ry={HEAD_RY}
+        fill="#fffdf8"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        transform={`rotate(-14 ${x} ${y})`}
+      />
+    );
+  }
+  return <ellipse cx={x} cy={y} rx={HEAD_RX} ry={HEAD_RY} fill="currentColor" transform={`rotate(-14 ${x} ${y})`} />;
+}
+
+/** Eighth-note flag attached at the stem tip. */
+function StemFlag({ stemX, stemTipY, stemUp }) {
+  if (stemUp) {
+    return (
+      <path
+        d={`M ${stemX} ${stemTipY} C ${stemX + 14} ${stemTipY + 6}, ${stemX + 16} ${stemTipY + 20}, ${stemX + 4} ${stemTipY + 28}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    );
+  }
+  return (
+    <path
+      d={`M ${stemX} ${stemTipY} C ${stemX + 14} ${stemTipY - 6}, ${stemX + 16} ${stemTipY - 20}, ${stemX + 4} ${stemTipY - 28}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  );
+}
+
 /**
- * notes: [{ letter: "G", octave: 4, acc?: "#"|"b", label?: "G" }]
- * clef: "treble" | "bass"
- * guide: "lines" | "spaces" — faint letter labels for teaching
- * interactive: tap a note to hear it (default true)
- * caption: small text under the staff
+ * Draw a pitched note with optional duration.
+ * value: "whole" | "half" | "quarter" | "eighth" (default "quarter")
  */
-export default function Staff({ clef = "treble", notes = [], guide = null, interactive = true, caption = null }) {
+function PitchedNote({ note, x, y, height, interactive, onTap }) {
+  const value = note.value || "quarter";
+  const isWhole = value === "whole";
+  const isOpen = value === "whole" || value === "half";
+  const hasFlag = value === "eighth";
+  const stemUp = y > LINES_Y[2];
+  const stemX = stemUp ? x + 6.6 : x - 6.6;
+  const stemTipY = stemUp ? y - STEM_LEN : y + STEM_LEN;
+
+  return (
+    <g onClick={onTap} style={interactive ? { cursor: "pointer" } : undefined}>
+      {interactive && <rect x={x - 18} y={y - 26} width="36" height="52" fill="transparent" />}
+      {ledgerLines(y).map((ly) => (
+        <line key={ly} x1={x - 11} y1={ly} x2={x + 11} y2={ly} stroke="currentColor" strokeWidth="1.1" opacity="0.75" />
+      ))}
+      {note.acc && (
+        <text x={x - 15} y={y + 4.5} fontSize="14" fontWeight="600" textAnchor="middle" fill="currentColor">
+          {note.acc === "#" ? "♯" : "♭"}
+        </text>
+      )}
+      {!isWhole && <line x1={stemX} y1={y} x2={stemX} y2={stemTipY} stroke="currentColor" strokeWidth="1.6" />}
+      {hasFlag && <StemFlag stemX={stemX} stemTipY={stemTipY} stemUp={stemUp} />}
+      <NoteHead x={x} y={y} open={isOpen} />
+      {note.label && (
+        <text x={x} y={height - 4} fontSize="10.5" fontWeight="700" textAnchor="middle" fill="currentColor" opacity="0.8">
+          {note.label}
+        </text>
+      )}
+    </g>
+  );
+}
+
+/**
+ * Rests sit in fixed staff positions (not pitch).
+ * rest: "whole" | "half" | "quarter" | "eighth"
+ */
+function RestSymbol({ rest, x, height, label }) {
+  // Whole hangs from the 4th line; half sits on the 3rd; quarter/eighth float mid-staff.
+  let body = null;
+  if (rest === "whole") {
+    body = <rect x={x - 7} y={LINES_Y[1]} width="14" height="6" fill="currentColor" />;
+  } else if (rest === "half") {
+    body = <rect x={x - 7} y={LINES_Y[2] - 6} width="14" height="6" fill="currentColor" />;
+  } else if (rest === "quarter") {
+    body = (
+      <path
+        d={`M ${x - 2} ${LINES_Y[0] + 4}
+            C ${x + 8} ${LINES_Y[1]}, ${x - 10} ${LINES_Y[2]}, ${x + 4} ${LINES_Y[2] + 4}
+            C ${x - 8} ${LINES_Y[3]}, ${x + 6} ${LINES_Y[3] + 6}, ${x - 2} ${BOTTOM_Y - 4}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    );
+  } else {
+    // eighth rest — classic "flag with a ball" shape
+    body = (
+      <g fill="currentColor" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        <path
+          d={`M ${x + 5} ${LINES_Y[3] + 2}
+              L ${x - 1} ${LINES_Y[1] - 2}
+              C ${x - 10} ${LINES_Y[1] + 8}, ${x + 2} ${LINES_Y[2] + 4}, ${x + 5} ${LINES_Y[1] + 6}`}
+          strokeWidth="1.8"
+        />
+      </g>
+    );
+  }
+
+  return (
+    <g>
+      {body}
+      {label && (
+        <text x={x} y={height - 4} fontSize="10.5" fontWeight="700" textAnchor="middle" fill="currentColor" opacity="0.8">
+          {label}
+        </text>
+      )}
+    </g>
+  );
+}
+
+/**
+ * Compact standalone glyph for teaching note/rest shapes outside a full staff.
+ * kind: note value name, or "rest-whole" / "rest-half" / etc.
+ */
+export function NoteGlyph({ kind = "quarter", size = 44 }) {
+  const isRest = kind.startsWith("rest-");
+  const value = isRest ? kind.slice(5) : kind;
+  const w = size;
+  const h = size * 1.35;
+  const cx = w / 2;
+  const cy = h * 0.58;
+  const lineYs = [0.28, 0.4, 0.52, 0.64, 0.76].map((t) => h * t);
+
+  if (isRest) {
+    let body = null;
+    if (value === "whole") {
+      body = <rect x={cx - 8} y={lineYs[1]} width="16" height="7" fill="currentColor" />;
+    } else if (value === "half") {
+      body = <rect x={cx - 8} y={lineYs[2] - 7} width="16" height="7" fill="currentColor" />;
+    } else if (value === "quarter") {
+      body = (
+        <path
+          d={`M ${cx - 2} ${lineYs[0] + 2}
+              C ${cx + 9} ${lineYs[1]}, ${cx - 10} ${lineYs[2]}, ${cx + 4} ${lineYs[2] + 2}
+              C ${cx - 8} ${lineYs[3]}, ${cx + 6} ${lineYs[3] + 4}, ${cx - 2} ${lineYs[4] - 2}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      );
+    } else {
+      body = (
+        <g fill="currentColor" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <path
+            d={`M ${cx + 5} ${lineYs[3] + 2}
+                L ${cx - 1} ${lineYs[1] - 2}
+                C ${cx - 10} ${lineYs[1] + 8}, ${cx + 2} ${lineYs[2] + 4}, ${cx + 5} ${lineYs[1] + 6}`}
+            strokeWidth="1.8"
+          />
+        </g>
+      );
+    }
+    return (
+      <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} aria-hidden="true" className="note-glyph">
+        {lineYs.map((y, i) => (
+          <line key={i} x1="4" y1={y} x2={w - 4} y2={y} stroke="currentColor" strokeWidth="1" opacity="0.35" />
+        ))}
+        {body}
+      </svg>
+    );
+  }
+
+  const open = value === "whole" || value === "half";
+  const hasStem = value !== "whole";
+  const hasFlag = value === "eighth";
+  const stemX = cx + 6.2;
+  const stemTip = cy - 28;
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} aria-hidden="true" className="note-glyph">
+      {hasStem && <line x1={stemX} y1={cy} x2={stemX} y2={stemTip} stroke="currentColor" strokeWidth="1.8" />}
+      {hasFlag && (
+        <path
+          d={`M ${stemX} ${stemTip} C ${stemX + 12} ${stemTip + 5}, ${stemX + 14} ${stemTip + 18}, ${stemX + 3} ${stemTip + 25}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      )}
+      <NoteHead x={cx} y={cy} open={open} />
+    </svg>
+  );
+}
+
+/**
+ * notes: [{ letter, octave, acc?, label?, value? } | { rest, label? }]
+ * value / rest: "whole" | "half" | "quarter" | "eighth"
+ * clef: "treble" | "bass" | "none" — "none" for rhythm-only examples
+ */
+export default function Staff({
+  clef = "treble",
+  notes = [],
+  guide = null,
+  interactive = true,
+  caption = null,
+}) {
+  const showClef = clef !== "none";
   const noteGap = 46;
-  const notesStart = 74;
-  const width = Math.max(230, notesStart + notes.length * noteGap + 26);
-  const hasLow = notes.some((n) => noteY(n, clef) > 92);
+  const notesStart = showClef ? 82 : 28;
+  const width = Math.max(showClef ? 230 : 160, notesStart + notes.length * noteGap + 26);
+  const pitched = notes.filter((n) => !n.rest);
+  const hasLow = pitched.some((n) => noteY(n, clef === "none" ? "treble" : clef) > 92);
   const height = hasLow ? 118 : 106;
+  const pitchClef = clef === "none" ? "treble" : clef;
 
   const tap = (note) => {
-    if (interactive) playNote(noteToMidi(note), { dur: 1.2, gain: 0.4 });
+    if (interactive && !note.rest) playNote(noteToMidi(note), { dur: 1.2, gain: 0.4 });
   };
+
+  const ariaNotes = notes
+    .map((n) => (n.rest ? `${n.rest} rest` : `${n.value || "quarter"} ${n.letter}${n.acc || ""}${n.octave}`))
+    .join(", ");
 
   return (
     <div className="staff-wrap">
@@ -115,58 +337,39 @@ export default function Staff({ clef = "treble", notes = [], guide = null, inter
         viewBox={`0 0 ${width} ${height}`}
         style={{ width: "100%", maxWidth: width * 1.35, display: "block" }}
         role="img"
-        aria-label={`${clef} staff${notes.length ? " with notes " + notes.map((n) => n.letter + (n.acc || "") + n.octave).join(", ") : ""}`}
+        aria-label={`${showClef ? clef : "rhythm"} staff${notes.length ? " with " + ariaNotes : ""}`}
       >
-        {/* staff lines */}
         {LINES_Y.map((y) => (
           <line key={y} x1="8" y1={y} x2={width - 8} y2={y} stroke="currentColor" strokeWidth="1.1" opacity="0.75" />
         ))}
-        {/* end barlines */}
         <line x1="8" y1={LINES_Y[0]} x2="8" y2={BOTTOM_Y} stroke="currentColor" strokeWidth="1.5" />
         <line x1={width - 8} y1={LINES_Y[0]} x2={width - 8} y2={BOTTOM_Y} stroke="currentColor" strokeWidth="1.5" />
 
-        {clef === "treble" ? <TrebleClef /> : <BassClef />}
-        {guide && <GuideLabels mode={guide} clef={clef} width={width} />}
+        {clef === "treble" && <TrebleClef />}
+        {clef === "bass" && <BassClef />}
+        {guide && showClef && <GuideLabels mode={guide} clef={pitchClef} width={width} />}
 
         {notes.map((note, i) => {
           const x = notesStart + i * noteGap;
-          const y = noteY(note, clef);
-          // Standard engraving rule: notes at or above the middle line get a
-          // stem pointing down (left side); notes below it point up (right
-          // side). Stems always reach toward the middle, so they never run
-          // off the top or bottom of the staff.
-          const stemUp = y > LINES_Y[2];
-          const stemX = stemUp ? x + 6.6 : x - 6.6;
-          const stemTipY = stemUp ? y - STEM_LEN : y + STEM_LEN;
+          if (note.rest) {
+            return <RestSymbol key={i} rest={note.rest} x={x} height={height} label={note.label} />;
+          }
+          const y = noteY(note, pitchClef);
           return (
-            <g
+            <PitchedNote
               key={i}
-              onClick={() => tap(note)}
-              style={interactive ? { cursor: "pointer" } : undefined}
-            >
-              {/* generous invisible tap target */}
-              {interactive && <rect x={x - 18} y={y - 26} width="36" height="52" fill="transparent" />}
-              {ledgerLines(y).map((ly) => (
-                <line key={ly} x1={x - 11} y1={ly} x2={x + 11} y2={ly} stroke="currentColor" strokeWidth="1.1" opacity="0.75" />
-              ))}
-              {note.acc && (
-                <text x={x - 15} y={y + 4.5} fontSize="14" fontWeight="600" textAnchor="middle" fill="currentColor">
-                  {note.acc === "#" ? "♯" : "♭"}
-                </text>
-              )}
-              <line x1={stemX} y1={y} x2={stemX} y2={stemTipY} stroke="currentColor" strokeWidth="1.6" />
-              <ellipse cx={x} cy={y} rx="7" ry="5.4" fill="currentColor" transform={`rotate(-14 ${x} ${y})`} />
-              {note.label && (
-                <text x={x} y={height - 4} fontSize="10.5" fontWeight="700" textAnchor="middle" fill="currentColor" opacity="0.8">
-                  {note.label}
-                </text>
-              )}
-            </g>
+              note={note}
+              x={x}
+              y={y}
+              height={height}
+              interactive={interactive}
+              onTap={() => tap(note)}
+            />
           );
         })}
       </svg>
       {caption && <div className="staff-caption">{caption}</div>}
-      {interactive && notes.length > 0 && <div className="staff-hint">tap a note to hear it</div>}
+      {interactive && pitched.length > 0 && <div className="staff-hint">tap a note to hear it</div>}
     </div>
   );
 }

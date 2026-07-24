@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { playChord, playInterval, playProgression } from "../audio.js";
 import { CHORD_QUALITIES, buildChord, INTERVALS, CADENCES, randomFrom, shuffle } from "../theory.js";
+import { PlayButton } from "../components/lessons/blocks.jsx";
 
 const GAMES = [
   { id: "emotion", title: "What does it feel like?", sub: "Hear a chord. Name its feeling — the note names come later." },
@@ -49,7 +50,6 @@ function newEmotionRound() {
 
 function ChordEmotion({ back, onCorrect }) {
   const [round, setRound] = useState(newEmotionRound);
-  const [played, setPlayed] = useState(false);
 
   const answer = (q) => {
     if (round.answered) return;
@@ -59,9 +59,12 @@ function ChordEmotion({ back, onCorrect }) {
 
   return (
     <GameFrame back={back} title="What does it feel like?" sub="Press play, close your eyes, and trust your first impression.">
-      <button className="btn btn-primary btn-block" onClick={() => { playChord(round.chord); setPlayed(true); }}>
-        ▶ &nbsp;{played ? "Hear it again" : "Play the chord"}
-      </button>
+      <PlayButton
+        key={round.quality + round.chord.join("-")}
+        onPlay={() => playChord(round.chord)}
+        label="Play the chord"
+        againLabel="Hear it again"
+      />
 
       <div className="options" role="group" aria-label="Answer options">
         {Object.entries(CHORD_QUALITIES).map(([q, def]) => {
@@ -85,7 +88,7 @@ function ChordEmotion({ back, onCorrect }) {
             <strong>{CHORD_QUALITIES[round.quality].label} chord.</strong>{" "}
             {CHORD_QUALITIES[round.quality].why}
           </div>
-          <NextButton onClick={() => { setRound(newEmotionRound()); setPlayed(false); }} />
+          <NextButton onClick={() => setRound(newEmotionRound())} />
         </>
       )}
     </GameFrame>
@@ -106,7 +109,6 @@ function newIntervalRound() {
 
 function IntervalGame({ back, onCorrect }) {
   const [round, setRound] = useState(newIntervalRound);
-  const [played, setPlayed] = useState(false);
 
   const answer = (opt) => {
     if (round.answered) return;
@@ -116,9 +118,12 @@ function IntervalGame({ back, onCorrect }) {
 
   return (
     <GameFrame back={back} title="How far did it leap?" sub="Every leap has a song that starts with it. Let the song surface.">
-      <button className="btn btn-primary btn-block" onClick={() => { playInterval(round.low, round.target.semitones); setPlayed(true); }}>
-        ▶ &nbsp;{played ? "Hear it again" : "Play the two notes"}
-      </button>
+      <PlayButton
+        key={round.target.semitones + "-" + round.low}
+        onPlay={() => playInterval(round.low, round.target.semitones)}
+        label="Play the two notes"
+        againLabel="Hear it again"
+      />
 
       <div className="options single-col" role="group" aria-label="Answer options">
         {round.options.map((opt) => {
@@ -141,7 +146,7 @@ function IntervalGame({ back, onCorrect }) {
           <div className="why" role="status" aria-live="polite">
             <strong>{round.target.label}.</strong> It sounds {round.target.character}. When you hear this leap in the wild, think of {round.target.anchor}.
           </div>
-          <NextButton onClick={() => { setRound(newIntervalRound()); setPlayed(false); }} />
+          <NextButton onClick={() => setRound(newIntervalRound())} />
         </>
       )}
     </GameFrame>
@@ -155,7 +160,6 @@ function newCadenceRound() {
 
 function CadenceGame({ back, onCorrect }) {
   const [round, setRound] = useState(newCadenceRound);
-  const [played, setPlayed] = useState(false);
 
   const answer = (finished) => {
     if (round.answered !== null) return;
@@ -165,9 +169,12 @@ function CadenceGame({ back, onCorrect }) {
 
   return (
     <GameFrame back={back} title="Finished, or still going?" sub="Music speaks in sentences. Some end with a period — some with a comma.">
-      <button className="btn btn-primary btn-block" onClick={() => { playProgression(round.cadence.chords); setPlayed(true); }}>
-        ▶ &nbsp;{played ? "Hear the phrase again" : "Play the phrase"}
-      </button>
+      <PlayButton
+        key={String(round.cadence.finished) + round.cadence.chords.length}
+        onPlay={() => playProgression(round.cadence.chords)}
+        label="Play the phrase"
+        againLabel="Hear the phrase again"
+      />
 
       <div className="options" role="group" aria-label="Answer options">
         {[
@@ -193,7 +200,7 @@ function CadenceGame({ back, onCorrect }) {
           <div className="why" role="status" aria-live="polite">
             <strong>{round.cadence.finished ? "Finished." : "Still going."}</strong> {round.cadence.why}
           </div>
-          <NextButton onClick={() => { setRound(newCadenceRound()); setPlayed(false); }} />
+          <NextButton onClick={() => setRound(newCadenceRound())} />
         </>
       )}
     </GameFrame>

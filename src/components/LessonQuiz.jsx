@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { playDemo } from "../demos.js";
 import { shuffle, shuffleOptions } from "../theory.js";
 import Staff from "./Staff.jsx";
+import { PlayButton } from "./lessons/blocks.jsx";
 
 // Mastery-style check: questions come one at a time (in a randomized order);
 // a missed question goes to the back of the queue and returns until it's
@@ -11,7 +11,6 @@ export default function LessonQuiz({ questions, onPassed, optional = false }) {
   const [queue, setQueue] = useState(() => shuffle(questions.map((_, i) => i)));
   const [selected, setSelected] = useState(null);
   const [mastered, setMastered] = useState(0);
-  const [played, setPlayed] = useState(false);
   const [passed, setPassed] = useState(false);
   const headingRef = useRef(null);
 
@@ -48,7 +47,6 @@ export default function LessonQuiz({ questions, onPassed, optional = false }) {
     }
     setQueue(newQueue);
     setSelected(null);
-    setPlayed(false);
     if (newQueue.length === 0) {
       setPassed(true);
       onPassed();
@@ -74,13 +72,7 @@ export default function LessonQuiz({ questions, onPassed, optional = false }) {
       )}
 
       {q.demo && (
-        <button
-          className="btn btn-primary btn-block"
-          style={{ marginBottom: 4 }}
-          onClick={() => { playDemo(q.demo); setPlayed(true); }}
-        >
-          ▶ &nbsp;{played ? "Hear it again" : "Play the sound"}
-        </button>
+        <PlayButton key={currentIdx} demo={q.demo} label="Play the sound" againLabel="Hear it again" style={{ marginBottom: 4 }} />
       )}
 
       <div

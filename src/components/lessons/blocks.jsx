@@ -1,26 +1,57 @@
 // Shared building blocks for lesson content, so every lesson looks and
 // behaves consistently.
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { playDemo } from "../../demos.js";
+import { stopAll } from "../../audio.js";
+import { NoteGlyph } from "../Staff.jsx";
+
+/**
+ * Play button that disables until the demo finishes and cancels any
+ * overlapping sound when clicked again after unlock.
+ */
+export function PlayButton({
+  demo,
+  onPlay,
+  label = "Play the sound",
+  againLabel = "Hear it again",
+  playingLabel = "Playing…",
+  className = "btn btn-primary btn-block",
+  style,
+}) {
+  const [busy, setBusy] = useState(false);
+  const [played, setPlayed] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const handle = () => {
+    if (busy) return;
+    let seconds = 0;
+    if (demo) seconds = playDemo(demo) || 0;
+    else if (onPlay) {
+      stopAll();
+      seconds = onPlay() || 0;
+    }
+    setPlayed(true);
+    setBusy(true);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setBusy(false), Math.max(seconds, 0.4) * 1000 + 80);
+  };
+
+  return (
+    <button className={className} style={style} onClick={handle} disabled={busy} aria-busy={busy}>
+      ▶ &nbsp;{busy ? playingLabel : played ? againLabel : label}
+    </button>
+  );
+}
 
 // A concept card with an optional play button and supporting text.
 export function DemoCard({ title, formula, demo, playLabel = "Hear it", children }) {
-  const [played, setPlayed] = useState(false);
   return (
     <div className="demo-card">
       <div className="demo-card-title">{title}</div>
       {formula && <div className="demo-card-formula">{formula}</div>}
-      {demo && (
-        <button
-          className="btn btn-small"
-          onClick={() => {
-            playDemo(demo);
-            setPlayed(true);
-          }}
-        >
-          ▶ {played ? "Again" : playLabel}
-        </button>
-      )}
+      {demo && <PlayButton demo={demo} label={playLabel} againLabel="Again" className="btn btn-small" />}
       {children && <div className="demo-card-body">{children}</div>}
     </div>
   );
@@ -49,28 +80,18 @@ export function Compare({ a, b }) {
   );
 }
 
-// A note value shown as a proportional bar (no music font needed) — the
-// bar's width is literally how long the note lasts relative to a beat.
-export function NoteValueBar({ label, beats, sub, demo }) {
-  const [played, setPlayed] = useState(false);
+// A note value shown as its real symbol, a proportional duration bar, and
+// an optional play button — see it, feel how long it lasts, hear it.
+export function NoteValueBar({ label, beats, sub, demo, glyph = "quarter" }) {
   return (
     <div className="note-value-row">
+      <NoteGlyph kind={glyph} size={40} />
       <div className="note-value-bar" style={{ width: `${Math.max(beats, 0.5) * 44}px` }} />
       <div className="note-value-label">
         <strong>{label}</strong>
         <span>{sub || (beats === 1 ? "1 beat" : `${beats} beats`)}</span>
       </div>
-      {demo && (
-        <button
-          className="btn btn-small"
-          onClick={() => {
-            playDemo(demo);
-            setPlayed(true);
-          }}
-        >
-          ▶ {played ? "Again" : "Hear it"}
-        </button>
-      )}
+      {demo && <PlayButton demo={demo} label="Hear it" againLabel="Again" className="btn btn-small" />}
     </div>
   );
 }

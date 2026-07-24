@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tip } from "./blocks.jsx";
+import { Tip, PlayButton } from "./blocks.jsx";
 import CircleOfFifthsDiagram from "../CircleOfFifths.jsx";
 import { playInterval } from "../../audio.js";
 
@@ -15,13 +15,12 @@ export default function LessonCircleOfFifths() {
         flat) than the one you started from. Do that twelve times in a row and you land right back
         where you started, having passed through every key that exists.
       </p>
-      <button
-        className="btn btn-primary btn-block"
+      <PlayButton
+        onPlay={() => playInterval(60, 7)}
+        label="Hear a perfect fifth"
+        againLabel="Hear a perfect fifth"
         style={{ marginBottom: 4 }}
-        onClick={() => playInterval(60, 7)}
-      >
-        ▶ &nbsp;Hear a perfect fifth
-      </button>
+      />
 
       <h3>Walking Around the Circle</h3>
       <p>

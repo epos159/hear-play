@@ -1,28 +1,34 @@
 // Resolve declarative audio-demo descriptors into playback. Lets lesson and
 // quiz data stay plain JSON-ish objects instead of holding functions.
-import { playNote, playChord, playInterval, playProgression, playSequence, playRhythm } from "./audio.js";
+import {
+  stopAll,
+  playNote,
+  playChord,
+  playInterval,
+  playProgression,
+  playSequence,
+  playRhythm,
+} from "./audio.js";
 
+/** Play a demo, cancelling anything already sounding. Returns duration in seconds. */
 export function playDemo(demo) {
-  if (!demo) return;
+  if (!demo) return 0;
+  stopAll();
   switch (demo.kind) {
     case "note":
-      playNote(demo.midi, { dur: 1.4 });
-      break;
+      return playNote(demo.midi, { dur: 1.4 });
     case "chord":
-      playChord(demo.notes);
-      break;
+      return playChord(demo.notes);
     case "interval":
-      playInterval(demo.low, demo.semitones);
-      break;
+      return playInterval(demo.low, demo.semitones);
     case "progression":
-      playProgression(demo.chords);
-      break;
+      return playProgression(demo.chords);
     case "sequence":
-      playSequence(demo.notes, demo.step ?? 0.32);
-      break;
+      return playSequence(demo.notes, demo.step ?? 0.32);
     case "rhythm":
-      playRhythm(demo.tokens, demo.opts);
-      break;
+      return playRhythm(demo.tokens, demo.opts);
+    default:
+      return 0;
   }
 }
 

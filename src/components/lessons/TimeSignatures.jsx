@@ -1,4 +1,7 @@
 import { BeatRow, DemoCard, Tip } from "./blocks.jsx";
+import Staff from "../Staff.jsx";
+
+const G4 = { letter: "G", octave: 4 };
 
 export default function LessonTimeSignatures() {
   return (
@@ -17,6 +20,17 @@ export default function LessonTimeSignatures() {
         means that — it's true for almost everything you'll play early on).
       </p>
       <BeatRow count={4} strongOn={[1]} />
+      <Staff
+        clef="none"
+        interactive={false}
+        notes={[
+          { ...G4, value: "quarter", label: "1" },
+          { ...G4, value: "quarter", label: "2" },
+          { ...G4, value: "quarter", label: "3" },
+          { ...G4, value: "quarter", label: "4" },
+        ]}
+        caption="One measure of 4/4 — four quarter notes, one per beat"
+      />
       <DemoCard
         title="Four beats, first one accented"
         demo={{ kind: "rhythm", tokens: ["quarter", "quarter", "quarter", "quarter"], opts: { accentFirst: true } }}
@@ -28,6 +42,16 @@ export default function LessonTimeSignatures() {
       <h3>3/4 — The Waltz Feel</h3>
       <p>Three beats per measure, one strong beat and two lighter ones — the "ONE-two-three" of a waltz.</p>
       <BeatRow count={3} strongOn={[1]} />
+      <Staff
+        clef="none"
+        interactive={false}
+        notes={[
+          { ...G4, value: "quarter", label: "1" },
+          { ...G4, value: "quarter", label: "2" },
+          { ...G4, value: "quarter", label: "3" },
+        ]}
+        caption="One measure of 3/4 — three quarter notes"
+      />
       <DemoCard
         title="Three beats, waltz feel"
         demo={{ kind: "rhythm", tokens: ["quarter", "quarter", "quarter"], opts: { accentFirst: true } }}
@@ -58,6 +82,20 @@ export const quiz = [
     options: ["2", "3", "4", "6"],
     correct: 2,
     why: "The top number of the time signature — 4 beats per measure.",
+  },
+  {
+    q: "This measure has three quarter notes. What time signature fits?",
+    staff: {
+      clef: "none",
+      notes: [
+        { letter: "G", octave: 4, value: "quarter", label: "1" },
+        { letter: "G", octave: 4, value: "quarter", label: "2" },
+        { letter: "G", octave: 4, value: "quarter", label: "3" },
+      ],
+    },
+    options: ["4/4 — four beats", "3/4 — three beats", "2/4 — two beats", "6/8 — six beats"],
+    correct: 1,
+    why: "Three quarter notes = three beats — that's 3/4, the waltz feel.",
   },
   {
     q: "Listen to this rhythm. Is it in 4 or in 3?",

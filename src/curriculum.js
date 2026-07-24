@@ -289,23 +289,49 @@ export const PLACEMENT_SECTIONS = [
     moduleId: "rhythm-basics",
     questions: [
       {
-        q: "Which of these lasts the longest?",
-        options: ["Eighth note", "Quarter note", "Half note", "Whole note"],
-        correct: 3,
-        why: "A whole note is held the longest — four beats in common time.",
+        q: "Which of these notes lasts the longest?",
+        staff: {
+          clef: "treble",
+          notes: [
+            { letter: "G", octave: 4, value: "quarter" },
+            { letter: "G", octave: 4, value: "eighth" },
+            { letter: "G", octave: 4, value: "whole" },
+            { letter: "G", octave: 4, value: "half" },
+          ],
+        },
+        options: ["The first (quarter note)", "The second (eighth note)", "The third (whole note)", "The fourth (half note)"],
+        correct: 2,
+        why: "The third is a whole note — hollow, no stem — held for four beats, the longest of the four shown.",
       },
       {
-        q: "Listen to this beat. How many clicks do you hear?",
-        demo: { kind: "rhythm", tokens: ["quarter", "quarter", "quarter", "quarter"], opts: { accentFirst: true } },
-        options: ["2", "3", "4", "6"],
-        correct: 2,
-        why: "Four even clicks — a steady quarter-note pulse.",
+        q: "Listen to this rhythm. Is the beat perfectly steady, or is there a gap in it?",
+        demo: { kind: "rhythm", tokens: ["quarter", "quarter", "rest-quarter", "quarter"], opts: { accentFirst: true } },
+        options: ["Steady — no gaps", "There's a gap — a beat of silence"],
+        correct: 1,
+        why: "Beat 3 is a rest — silence that still takes up time. Noticing that gap is real rhythmic listening.",
       },
       {
         q: "A rest tells the performer to…",
         options: ["Play softer", "Stay silent", "Play faster", "Repeat the note"],
         correct: 1,
         why: "A rest is musical silence — it still takes up time, just with no sound.",
+      },
+      {
+        q: "How many quarter notes fit inside one whole note?",
+        options: ["Two", "Three", "Four", "Eight"],
+        correct: 2,
+        why: "A whole note is four beats; each quarter note is one beat — so four quarters fill a whole.",
+      },
+      {
+        q: "Listen. Is this moving in quarter notes or eighth notes?",
+        demo: {
+          kind: "rhythm",
+          tokens: ["eighth", "eighth", "eighth", "eighth", "eighth", "eighth", "eighth", "eighth"],
+          opts: { accentFirst: true },
+        },
+        options: ["Quarter notes — a walking pace", "Eighth notes — twice as fast", "Half notes — slow", "Whole notes — very slow"],
+        correct: 1,
+        why: "Eighth notes move twice as quickly as quarter notes — that lighter, faster click is what you heard.",
       },
     ],
   },
@@ -343,6 +369,13 @@ export const PLACEMENT_SECTIONS = [
         correctMidi: 64,
         why: "That's the bottom line of the treble staff — E4, just above middle C.",
       },
+      {
+        q: "What note sits on one ledger line below the treble staff?",
+        staff: { clef: "treble", notes: [{ letter: "C", octave: 4 }] },
+        options: ["Low A", "Middle C", "D", "E"],
+        correct: 1,
+        why: "One ledger line below the treble staff is middle C — the most useful anchor note on the piano.",
+      },
     ],
   },
   {
@@ -370,6 +403,12 @@ export const PLACEMENT_SECTIONS = [
         correct: 0,
         why: "That's the tonic — the note the scale is named after and built around.",
       },
+      {
+        q: "The major-scale step pattern is often remembered as…",
+        options: ["All half steps", "Whole–whole–half, then whole–whole–whole–half", "Half–whole–half–whole…", "Five wholes in a row"],
+        correct: 1,
+        why: "W–W–H–W–W–W–H — that pattern is what makes any major scale sound major, no matter which note you start on.",
+      },
     ],
   },
   {
@@ -394,6 +433,12 @@ export const PLACEMENT_SECTIONS = [
         options: ["G major", "F major", "C major", "D major"],
         correct: 2,
         why: "C major — every note is a white key with no accidentals, which is why it's the usual starting point.",
+      },
+      {
+        q: "F major's key signature has one flat. Which note is it?",
+        options: ["E♭", "B♭", "A♭", "D♭"],
+        correct: 1,
+        why: "B♭ — flats are always added in the order B–E–A–D–G–C–F, so the first flat is always B♭.",
       },
     ],
   },
@@ -421,6 +466,13 @@ export const PLACEMENT_SECTIONS = [
         options: ["A step", "A half-step", "A third", "A leap"],
         correct: 1,
         why: "A half-step (semitone) — one key to its very next neighbor, black or white.",
+      },
+      {
+        q: "How far is this leap?",
+        demo: { kind: "interval", low: 60, semitones: 4 },
+        options: ["A small step", "A medium leap", "A wide, open leap", "A full octave"],
+        correct: 1,
+        why: "A major third — a medium leap. Think of the first two notes of \"When the Saints Go Marching In.\"",
       },
     ],
   },
@@ -450,6 +502,12 @@ export const PLACEMENT_SECTIONS = [
         correct: 3,
         why: "A diminished chord — everything squeezed close together, uneasy and unresolved.",
       },
+      {
+        q: "A basic triad is built from how many notes?",
+        options: ["Two", "Three", "Four", "Five"],
+        correct: 1,
+        why: "Tri- means three — root, third, and fifth stacked together.",
+      },
     ],
   },
   {
@@ -476,6 +534,12 @@ export const PLACEMENT_SECTIONS = [
         options: ["Comma", "Question mark", "Period", "Exclamation point"],
         correct: 2,
         why: "A period — the phrase has fully resolved and come to rest.",
+      },
+      {
+        q: "In a major key, the I, IV, and V chords are the ones that…",
+        options: ["Sound tense and unstable", "Are the three most \"at home\" major chords in the key", "Only appear in classical music", "Always use black keys"],
+        correct: 1,
+        why: "I, IV, and V are the primary triads — the backbone of countless songs in any major key.",
       },
     ],
   },
@@ -506,9 +570,12 @@ function summarizeSection(section, outcomes) {
   const total = section.questions.length;
   const correct = outcomes.filter((o) => o === "correct").length;
   const dontKnow = outcomes.filter((o) => o === "dontknow").length;
+  // Strict: a section only counts as solid when every question is right.
+  // One miss (or "don't know") keeps it on the learning path — placement
+  // should never skip you past something you only partly know.
   let status = "new";
   if (total > 0) {
-    if (correct / total >= 0.66) status = "know-well";
+    if (correct === total) status = "know-well";
     else if (correct > 0) status = "developing";
   }
   return {

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { CURRICULUM, PLACEMENT_SECTIONS, buildShuffledPlacementSections, computePlacementResult } from "../curriculum.js";
-import { playDemo } from "../demos.js";
 import { noteName } from "../theory.js";
 import Staff from "./Staff.jsx";
 import Keyboard from "./Keyboard.jsx";
+import { PlayButton } from "./lessons/blocks.jsx";
 
 const DONT_KNOW = "dontknow";
 const TOTAL_QUESTIONS = PLACEMENT_SECTIONS.reduce((n, s) => n + s.questions.length, 0);
@@ -15,7 +15,6 @@ export default function PlacementTest({ onComplete }) {
   const [sectionIdx, setSectionIdx] = useState(0);
   const [qIdx, setQIdx] = useState(0);
   const [selected, setSelected] = useState(null);
-  const [played, setPlayed] = useState(false);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const headingRef = useRef(null);
@@ -53,7 +52,6 @@ export default function PlacementTest({ onComplete }) {
     const nextAnswers = { ...answers, [section.id]: sectionAnswers };
     setAnswers(nextAnswers);
     setSelected(null);
-    setPlayed(false);
 
     if (!isLastQuestionInSection) {
       setQIdx(qIdx + 1);
@@ -110,16 +108,13 @@ export default function PlacementTest({ onComplete }) {
         {question.staff && <Staff clef={question.staff.clef} notes={question.staff.notes} interactive={false} />}
 
         {question.demo && (
-          <button
-            className="btn btn-primary btn-block"
+          <PlayButton
+            key={`${sectionIdx}-${qIdx}`}
+            demo={question.demo}
+            label="Play the sound"
+            againLabel="Hear it again"
             style={{ marginBottom: 4 }}
-            onClick={() => {
-              playDemo(question.demo);
-              setPlayed(true);
-            }}
-          >
-            ▶ &nbsp;{played ? "Hear it again" : "Play the sound"}
-          </button>
+          />
         )}
 
         {isTapKey ? (
@@ -218,31 +213,39 @@ function PlacementResults({ result, onChoose }) {
   return (
     <div className="fade-in">
       <h1 className="screen-title" ref={headingRef} tabIndex={-1}>
-        Here's what we learned about you
+        Here's your starting map
       </h1>
       <p className="screen-sub">
-        This isn't a score — it's a map. Everything below is exactly what the lessons are for.
+        This isn't a pass/fail grade. A section only counts as solid when you get every question
+        right — anything less stays on your learning path.
       </p>
 
       {result.knowWell.length > 0 && (
         <div className="card">
-          <div className="eyebrow">You seem to know these well</div>
+          <div className="eyebrow">Solid — every question right</div>
           <ul className="placement-list">
             {result.knowWell.map((s) => (
-              <li key={s.id}>{s.title}</li>
+              <li key={s.id}>
+                {s.title}
+                <span className="subtle"> — {s.correct} of {s.total}</span>
+              </li>
             ))}
           </ul>
         </div>
       )}
 
       <div className="card">
-        <div className="eyebrow">We'll work on these to get them down solidly</div>
+        <div className="eyebrow">On your learning path</div>
         {result.toLearn.length > 0 ? (
           <ul className="placement-list">
             {result.toLearn.map((s) => (
               <li key={s.id}>
                 {s.title}
-                {s.status === "developing" && <span className="subtle"> — you're partway there</span>}
+                <span className="subtle">
+                  {" "}
+                  — {s.correct} of {s.total}
+                  {s.status === "developing" ? " · partway there" : " · start here"}
+                </span>
               </li>
             ))}
           </ul>
@@ -254,11 +257,11 @@ function PlacementResults({ result, onChoose }) {
       </div>
 
       <div className="card" style={{ textAlign: "center" }}>
-        <div className="eyebrow">Suggested path</div>
-        <h2 style={{ marginBottom: 10 }}>Start with {recommendedModule.title}</h2>
+        <div className="eyebrow">Suggested starting point</div>
+        <h2 style={{ marginBottom: 10 }}>Begin with {recommendedModule.title}</h2>
         <p className="subtle" style={{ marginBottom: 16 }}>{recommendedModule.subtitle}</p>
         <button className="btn btn-primary btn-block" onClick={() => onChoose(result.recommendedModuleIndex, false)}>
-          Follow this path →
+          Start here →
         </button>
         <button className="btn btn-ghost btn-block" style={{ marginTop: 10 }} onClick={() => onChoose(0, false)}>
           Start from the very beginning

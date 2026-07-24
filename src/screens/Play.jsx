@@ -2,6 +2,7 @@ import { useState } from "react";
 import Keyboard from "../components/Keyboard.jsx";
 import { playChord, playPattern } from "../audio.js";
 import { buildChord, CHORD_QUALITIES, noteName } from "../theory.js";
+import { PlayButton } from "../components/lessons/blocks.jsx";
 
 // Root positions in the C4 octave for the chord library
 const ROOTS = [
@@ -59,9 +60,16 @@ export default function Play({ onExplore }) {
         </p>
         <p className="subtle" style={{ margin: "0 0 14px" }}>{def.feeling}</p>
 
-        <button className="btn btn-primary" onClick={() => { playChord(chord); onExplore(); }}>
-          ▶ &nbsp;Hear this shape
-        </button>
+        <PlayButton
+          onPlay={() => {
+            const d = playChord(chord);
+            onExplore();
+            return d;
+          }}
+          label="Hear this shape"
+          againLabel="Hear this shape"
+          className="btn btn-primary"
+        />
       </div>
 
       <div className="card">
@@ -72,9 +80,16 @@ export default function Play({ onExplore }) {
           <div key={p.id} style={{ margin: "16px 0" }}>
             <h3>{p.name}</h3>
             <p className="subtle" style={{ margin: "4px 0 8px" }}>{p.desc}</p>
-            <button className="btn btn-ghost" onClick={() => { playPattern(chord, p.id); onExplore(); }}>
-              ▶ &nbsp;Hear it
-            </button>
+            <PlayButton
+              onPlay={() => {
+                const d = playPattern(chord, p.id);
+                onExplore();
+                return d;
+              }}
+              label="Hear it"
+              againLabel="Hear it"
+              className="btn btn-ghost"
+            />
           </div>
         ))}
       </div>

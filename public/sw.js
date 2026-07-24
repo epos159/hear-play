@@ -6,7 +6,7 @@
 // every JS/CSS file a content hash in its filename, so as long as the HTML
 // itself is never stale, the hashed assets it references are always exactly
 // the ones from that build — no manual cache-busting needed for them.
-const CACHE = "htp-v2";
+const CACHE = "htp-v3";
 
 self.addEventListener("install", () => self.skipWaiting());
 

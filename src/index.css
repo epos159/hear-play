@@ -190,6 +190,12 @@ button {
   transform: scale(0.97);
 }
 
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn-primary {
   background: var(--ember);
   color: #fff;
@@ -616,6 +622,11 @@ button {
   background: rgba(58, 44, 33, 0.12);
 }
 
+.btn-small:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* ————— Staff renderer ————— */
 .staff-wrap {
   color: var(--walnut);
@@ -891,6 +902,11 @@ button {
   align-items: center;
   gap: 12px;
   margin: 10px 0;
+}
+
+.note-glyph {
+  flex-shrink: 0;
+  color: var(--walnut);
 }
 
 .note-value-bar {
